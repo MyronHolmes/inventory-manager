@@ -50,7 +50,6 @@ router.post('/login', async (req, res) => {
   if (!email || !password)
     return res.status(400).json({ message: 'Missing email or password' });
 
-
   try {
     const response = await fetch(
       `${process.env.PGRST_DB_URL}users?email=eq.${encodeURIComponent(email)}`,
@@ -62,29 +61,30 @@ router.post('/login', async (req, res) => {
         },
       }
     );
-    console.log("Hit")
     if (!response.ok) {
       return res.status(response.status).json({ message: 'User lookup failed' });
     }
-
+    
     const users = await response.json();
+    console.log(users)
     if (users.length === 0) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     const user = users[0];
-    const isMatch = await bcrypt.compare(password, user.password_hash);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      JWT_SECRET,
-      { expiresIn: '1h' }
-    );
+    // const token = jwt.sign(
+    //   { id: user.id, email: user.email },
+    //   JWT_SECRET,
+    //   { expiresIn: '1h' }
+    // );
 
-    res.json({ token });
+    // res.json({ token });
+    return res.status(200).json({ user });
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ message: 'Server error' });
