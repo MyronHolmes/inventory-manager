@@ -8,10 +8,10 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 import express from "express";
 import bcrypt from "bcrypt";
-// import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
-// const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Register User
 router.post("/register", async (req, res) => {
@@ -47,7 +47,6 @@ router.post("/register", async (req, res) => {
 // Login User
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
   if (!email || !password)
     return res.status(400).json({ message: "Missing email or password" });
 
@@ -69,7 +68,6 @@ router.post("/login", async (req, res) => {
     }
 
     const users = await response.json();
-    console.log(users);
     if (users.length === 0) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -78,27 +76,49 @@ router.post("/login", async (req, res) => {
     const userCookie = {
       firstName: user.first_name,
       lastName: user.last_name,
-      firstName: user.email,
-      id: user.id,
+      email: user.email,
     };
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // const token = jwt.sign(
-    //   { id: user.id, email: user.email },
-    //   JWT_SECRET,
-    //   { expiresIn: '1h' }
-    // );
-
-    // res.json({ token });
-    res.cookie("user", userCookie);
-    return res.status(200).json({ user });
+    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
+    return res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+      })
+      .cookie("user", JSON.stringify(userCookie), {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+      })
+      .status(200)
+      .json({ message: "Login successful", user: userCookie });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ message: "Server error" });
   }
+});
+
+// Logout User
+router.post("/logout", (req, res) => {
+  return res
+    .clearCookie("user", {
+      path: "/",
+      sameSite: "Strict",
+      secure: process.env.NODE_ENV === "production",
+    })
+    .clearCookie("token", {
+      path: "/",
+      httpOnly: true,
+      sameSite: "Strict",
+      secure: process.env.NODE_ENV === "production",
+    })
+    .status(200)
+    .json({ message: "Logged out successfully" });
 });
 
 export default router;
