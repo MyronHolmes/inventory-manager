@@ -22,7 +22,7 @@ router.post("/register", async (req, res) => {
   const password_hash = await bcrypt.hash(password, 10);
 
   try {
-    const response = await fetch(`${process.env.PGRST_DB_URL}/users`, {
+    const response = await fetch(`${process.env.PGRST_DB_URL}users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -120,6 +120,34 @@ router.post("/logout", (req, res) => {
     })
     .status(200)
     .json({ message: "Logged out successfully" });
+});
+
+// Users Table
+router.get("/users", async (req, res) => {
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}users`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      }
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.log(error)
+
+      return res.status(response.status).json(error);
+    }
+
+    const data = await response.json()
+    console.log(data)
+
+    res.status(200).json({ users: data });
+  } catch (err) {
+    console.error("Registration error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 export default router;

@@ -1,6 +1,8 @@
 import { Dashboard } from './pages/Dashboard';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
+import Users from './pages/Users';
+import AccessDenied from './pages/AccessDenied';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import NotFound from './pages/NotFound';
 import NavBar from './components/NavBar';
@@ -9,7 +11,9 @@ import { getCookie } from './utils/auth';
 function AppWrapper() {
   const location = useLocation();
   const hideNavOnPaths = ['/login'];
-  const authenticated = getCookie("user");
+  const authenticated = JSON.parse(getCookie("user"));
+  const authorized = authenticated?.role;
+  console.log(authorized)
 
   return (
     <>
@@ -24,6 +28,9 @@ function AppWrapper() {
           <>
             <Route index element={<Dashboard />} />
             <Route path="/logout" element={<Logout />} />
+            <Route path="/users" element={
+              authorized === "admin" ? <Users /> : <AccessDenied />
+            } />
             <Route path="*" element={<NotFound />} />
           </>
         ) : (

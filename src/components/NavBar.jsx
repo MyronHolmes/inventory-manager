@@ -4,7 +4,7 @@ import { PencilRuler } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
+  { name: 'Users', href: '/users', current: false },
   { name: 'Projects', href: '#', current: false },
   
 ]
