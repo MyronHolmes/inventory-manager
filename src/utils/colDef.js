@@ -1,11 +1,11 @@
-import { formatColumnName } from "./tableConfig";
+import { formatColumnName } from "./format";
 
-export const columnsToHide = ["id", "updated_by_user_id"];
+export const columnsToHide = ["password"];
 
 const defaultCol = {
     cellDataType: "text",
-    cellStyle: { "white-space": "pre" },
-    filter: "agSetColumnFilter",
+    cellStyle: { "whiteSpace": "pre" },
+    filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
 
@@ -50,18 +50,18 @@ const dateCol = {
 const activeCol = {
     cellDataType: "boolean",
     cellRendererParams: { disabled: true },
-    filter: "agSetColumnFilter",
+    filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
 const phoneCol = {
     cellDataType: "text",
     cellEditorParams: { maxLength: 10 },
-    filter: "agSetColumnFilter",
+    filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
 const numberCol = {
     cellDataType: "number",
-    filter: "agSetColumnFilter",
+    filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
 const enumStageCol = {
@@ -70,7 +70,7 @@ const enumStageCol = {
     cellEditorParams: {
         values: ["admin", "manager", "employee"]
     },
-    filter: "agSetColumnFilter",
+    filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
 
@@ -82,25 +82,25 @@ export const tableMap = {
         "email": defaultCol,
         "role": defaultCol,
         "password": defaultCol,
-        "created_by": dateTimeCol,
+        "created_at": dateTimeCol,
         "updated_at": dateTimeCol
     },
     "colors": {
         "id": defaultCol,
         "color": defaultCol,
-        "created_by": dateTimeCol,
+        "created_at": dateTimeCol,
         "updated_at": dateTimeCol
     },
     "categories": {
         "id": defaultCol,
         "category": defaultCol,
-        "created_by": dateTimeCol,
+        "created_at": dateTimeCol,
         "updated_at": dateTimeCol
     },
     "sizes": {
         "id": defaultCol,
         "size": defaultCol,
-        "created_by": dateTimeCol,
+        "created_at": dateTimeCol,
         "updated_at": dateTimeCol
     },
     "products": {
@@ -111,7 +111,7 @@ export const tableMap = {
         "photo_url": defaultCol,
         "quantity": numberCol,
         "status": defaultCol,
-        "created_by": dateTimeCol,
+        "created_at": dateTimeCol,
         "updated_at": dateTimeCol
     },
     "product_variants": {
@@ -120,7 +120,7 @@ export const tableMap = {
         "size_id": defaultCol,
         "color_id": defaultCol,
         "quantity": numberCol,
-        "created_by": dateTimeCol,
+        "created_at": dateTimeCol,
         "updated_at": dateTimeCol
     }
 }

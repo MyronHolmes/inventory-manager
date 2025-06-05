@@ -3,7 +3,7 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { PencilRuler } from 'lucide-react';
 
 const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
+  { name: 'Dashboard', href: '/', current: true },
   { name: 'Users', href: '/users', current: false },
   { name: 'Projects', href: '#', current: false },
   
