@@ -35,7 +35,7 @@ export default function () {
             </div>
             <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
               <div>
-                <PencilRuler color="orange" size={37}/>
+                <PencilRuler color="#f97316" size={37}/>
               </div>
               <div className="hidden sm:ml-6 sm:block">
                 <div className="flex space-x-4">

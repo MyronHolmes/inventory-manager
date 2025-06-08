@@ -1,7 +1,8 @@
 export function formatColumnName(key){
   return key
-    .replace(/([A-Z])/g, " $1") 
-    .replace(/^./, (str) => str.toUpperCase()); 
+    .split('_')                               
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) 
+    .join(' ');
 }
 
 export function reverseFormatColumnName(key){

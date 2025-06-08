@@ -21,6 +21,11 @@ router.post("/register", async (req, res) => {
 
   const password_hash = await bcrypt.hash(password, 10);
 
+  let bodyObj = {
+    ...req.body,
+    "password": password_hash
+  }
+
   try {
     const response = await fetch(`${process.env.PGRST_DB_URL}users`, {
       method: "POST",
@@ -28,11 +33,12 @@ router.post("/register", async (req, res) => {
         "Content-Type": "application/json",
         Prefer: "return=representation",
       },
-      body: JSON.stringify({ email, password_hash }),
+      body: JSON.stringify(bodyObj),
     });
 
     if (!response.ok) {
       const error = await response.json();
+      console.error(error)
       return res.status(response.status).json(error);
     }
 
@@ -135,7 +141,8 @@ router.get("/users", async (req, res) => {
 
     if (!response.ok) {
       const error = await response.json();
-      console.log(error)
+      console.error(error)
+
 
       return res.status(response.status).json(error);
     }
