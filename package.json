@@ -4,24 +4,39 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "start:dev": "dotenv -- postgrest",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.4",
+    "@heroicons/react": "^2.2.0",
+    "@tailwindcss/vite": "^4.1.7",
+    "ag-charts-react": "^11.3.1",
+    "ag-grid-react": "^33.3.1",
+    "dotenv": "^16.5.0",
+    "dotenv-cli": "^7.0.0",
+    "lucide-react": "^0.511.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.0",
+    "tailwind-merge": "^3.3.0",
+    "tailwindcss": "^4.1.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "vite": "^6.3.5"
   }
 }
