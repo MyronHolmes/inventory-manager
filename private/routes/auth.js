@@ -23,8 +23,8 @@ router.post("/register", async (req, res) => {
 
   let bodyObj = {
     ...req.body,
-    "password": password_hash
-  }
+    password: password_hash,
+  };
 
   try {
     const response = await fetch(`${process.env.PGRST_DB_URL}users`, {
@@ -38,7 +38,7 @@ router.post("/register", async (req, res) => {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error(error)
+      console.error(error);
       return res.status(response.status).json(error);
     }
 
@@ -80,10 +80,11 @@ router.post("/login", async (req, res) => {
 
     const user = users[0];
     const userCookie = {
+      id: user.id,
       firstName: user.first_name,
       lastName: user.last_name,
       email: user.email,
-      role: user.role
+      role: user.role,
     };
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -136,23 +137,76 @@ router.get("/users", async (req, res) => {
       headers: {
         "Content-Type": "application/json",
         Prefer: "return=representation",
-      }
+      },
     });
 
     if (!response.ok) {
       const error = await response.json();
-      console.error(error)
-
+      console.error(error);
 
       return res.status(response.status).json(error);
     }
 
-    const data = await response.json()
-    console.log(data)
+    const data = await response.json();
+    console.log(data);
 
     res.status(200).json({ users: data });
   } catch (err) {
     console.error("Registration error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Colors Table
+router.get("/colors", async (req, res) => {
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}colors`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error(error);
+
+      return res.status(response.status).json(error);
+    }
+
+    const data = await response.json();
+    console.log(data);
+
+    res.status(200).json({ colors: data });
+  } catch (err) {
+    console.error("Colors error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/colors", async (req, res) => {
+  console.log(req.body)
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}colors`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(req.body),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error(error);
+      return res.status(response.status).json(error);
+    }
+
+    const newColor = await response.json();
+    res.status(201).json({ message: "Color created", user: newColor[0] });
+  } catch (err) {
+    console.error("Color creation error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });

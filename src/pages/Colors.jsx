@@ -7,27 +7,23 @@ import { getCookie } from "../utils/auth";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-export default function Users() {
+export default function Colors() {
   const user = JSON.parse(getCookie("user"));
   const [rowData, setRowData] = useState([]);
   const [columnDefs, setColumnDefs] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    role: "",
-    password: "",
-    created_by: user?.id || null``
+    color: "",
+    created_by: user?.id || null,
   });
 
   useEffect(() => {
-    fetch("/api/auth/users")
+    fetch("/api/auth/colors")
       .then((res) => res.json())
       .then((data) => {
-        if (data.users.length > 0) {
-          setColumnDefs(createColDef(data.users[0], "users"));
-          setRowData(data.users);
+        if (data.colors.length > 0) {
+          setColumnDefs(createColDef(data.colors[0], "colors"));
+          setRowData(data.colors);
         }
       });
   }, []);
@@ -51,7 +47,7 @@ export default function Users() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("/api/auth/register", {
+    const response = await fetch("/api/auth/colors", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -59,29 +55,25 @@ export default function Users() {
 
     if (response.ok) {
       const result = await response.json();
-      setRowData((prev) => [...prev, result.user]);
+      setRowData((prev) => [...prev, result.color]);
       setFormData({
-        first_name: "",
-        last_name: "",
-        email: "",
-        role: "",
-        password: "",
+        color: "",
       });
       setIsModalOpen(false);
     } else {
-      console.error("Error adding user");
+      console.error("Error adding color");
     }
   };
 
   return (
     <div className="ag-theme-alpine p-4 space-y-6 bg-gray-900 min-h-screen text-white">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-orange-500">User Management</h1>
+        <h1 className="text-2xl font-bold text-orange-500">Color Management</h1>
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
         >
-          + Add User
+          + Add Color
         </button>
       </div>
 
@@ -103,7 +95,7 @@ export default function Users() {
           <div className="bg-gray-800 p-6 rounded-lg w-full max-w-lg shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-orange-400">
-                Add New User
+                Add New Color
               </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -117,44 +109,9 @@ export default function Users() {
               <div className="grid grid-cols-2 gap-4">
                 <input
                   type="text"
-                  name="first_name"
-                  placeholder="First Name"
-                  value={formData.first_name}
-                  onChange={handleChange}
-                  className="p-2 rounded bg-gray-700"
-                  required
-                />
-                <input
-                  type="text"
-                  name="last_name"
-                  placeholder="Last Name"
-                  value={formData.last_name}
-                  onChange={handleChange}
-                  className="p-2 rounded bg-gray-700"
-                  required
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="p-2 rounded bg-gray-700"
-                  required
-                />
-                <input
-                  type="text"
-                  name="role"
-                  placeholder="Role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  className="p-2 rounded bg-gray-700"
-                />
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={formData.password}
+                  name="color"
+                  placeholder="Color"
+                  value={formData.color}
                   onChange={handleChange}
                   className="p-2 rounded bg-gray-700"
                   required
@@ -173,7 +130,7 @@ export default function Users() {
                   type="submit"
                   className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded"
                 >
-                  Add User
+                  Add Color
                 </button>
               </div>
             </form>
