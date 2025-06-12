@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { myTheme } from "../utils/tableConfig";
@@ -14,7 +14,7 @@ export default function Colors() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     color: "",
-    created_by: user?.id || null,
+    created_by: user.id,
   });
 
   useEffect(() => {
@@ -65,6 +65,20 @@ export default function Colors() {
     }
   };
 
+    const onRowValueChanged = useCallback(async (event) => {
+    console.log("Data after change is", event.data, event);
+    const putObj = {
+        ... event.data,
+        updated_by: user.id
+    }
+
+    const response = await fetch("/api/auth/colors", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(putObj),
+    });
+  }, []);
+
   return (
     <div className="ag-theme-alpine p-4 space-y-6 bg-gray-900 min-h-screen text-white">
       <div className="flex justify-between items-center">
@@ -86,6 +100,8 @@ export default function Colors() {
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           theme={myTheme}
+          editType={"fullRow"}
+          onRowValueChanged={onRowValueChanged}
         />
       </div>
 

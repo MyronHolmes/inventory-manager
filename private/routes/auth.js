@@ -211,4 +211,36 @@ router.post("/colors", async (req, res) => {
   }
 });
 
+router.put("/colors", async (req, res) => {
+  const { id, color, updated_by } = req.body;
+  const postObj = {
+    id,
+    color,
+    updated_by
+  };
+
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}colors?id=eq.${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(postObj),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error(error);
+      return res.status(response.status).json(error);
+    }
+
+    const newColor = await response.json();
+    res.status(201).json({ message: "Color created", user: newColor[0] });
+  } catch (err) {
+    console.error("Color creation error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;
