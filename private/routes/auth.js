@@ -243,4 +243,35 @@ router.put("/colors", async (req, res) => {
   }
 });
 
+router.delete("/colors", async (req, res) => {
+  const { ids } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ message: "No IDs provided" });
+  }
+
+  const idFilter = ids.map(id => `"${id}"`).join(",");
+
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}colors?id=in.(${idFilter})`, {
+      method: "DELETE",
+      headers: {
+        Prefer: "return=representation", // Optional: to get deleted rows back
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Error deleting from PostgREST:", error);
+      return res.status(response.status).json(error);
+    }
+
+    const deleted = await response.json();
+    res.status(200).json({ message: "Deleted successfully", deleted });
+  } catch (err) {
+    console.error("Server error deleting colors:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;

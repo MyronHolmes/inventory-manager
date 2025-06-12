@@ -1,16 +1,21 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { myTheme } from "../utils/tableConfig";
 import { createColDef } from "../utils/colDef";
 import { getCookie } from "../utils/auth";
+import DeleteButton from "../components/DeleteButton";
+import { refreshRowData } from "../utils/fetchHelpers";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function Colors() {
   const user = JSON.parse(getCookie("user"));
+  const location = useLocation();
   const [rowData, setRowData] = useState([]);
   const [columnDefs, setColumnDefs] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     color: "",
@@ -36,6 +41,13 @@ export default function Colors() {
     }),
     []
   );
+  const rowSelection = useMemo(
+    () => ({
+      mode: "multiRow",
+      headerCheckbox: false,
+    }),
+    []
+  );
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -46,7 +58,6 @@ export default function Colors() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const response = await fetch("/api/auth/colors", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -54,30 +65,55 @@ export default function Colors() {
     });
 
     if (response.ok) {
-      const result = await response.json();
-      setRowData((prev) => [...prev, result.color]);
+      refreshRowData(location.pathname, setRowData);
+      setIsModalOpen(false);
       setFormData({
         color: "",
+        created_by: user.id,
       });
-      setIsModalOpen(false);
     } else {
       console.error("Error adding color");
     }
   };
 
-    const onRowValueChanged = useCallback(async (event) => {
+  const onRowValueChanged = useCallback(async (event) => {
     console.log("Data after change is", event.data, event);
     const putObj = {
-        ... event.data,
-        updated_by: user.id
-    }
+      ...event.data,
+      updated_by: user.id,
+    };
 
     const response = await fetch("/api/auth/colors", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(putObj),
     });
+
+    if (response.ok) {
+      refreshRowData(location.pathname, setRowData);
+    }
   }, []);
+
+  const onSelectionChanged = useCallback((event) => {
+    const selected = event.api.getSelectedRows();
+    setSelectedRows(selected);
+  }, []);
+
+  const onDelete = async (rows) => {
+    const ids = rows.map((row) => row.id);
+
+    const response = fetch("/api/auth/colors", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ids }),
+    });
+
+    if (response.ok) {
+      refreshRowData(location.pathname, setRowData);
+    }
+  };
 
   return (
     <div className="ag-theme-alpine p-4 space-y-6 bg-gray-900 min-h-screen text-white">
@@ -100,9 +136,14 @@ export default function Colors() {
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           theme={myTheme}
+          rowSelection={rowSelection}
           editType={"fullRow"}
           onRowValueChanged={onRowValueChanged}
+          onSelectionChanged={onSelectionChanged}
         />
+      </div>
+      <div className="flex flex-row-reverse">
+        <DeleteButton selectedRows={selectedRows} onDelete={onDelete} />
       </div>
 
       {/* Modal */}
