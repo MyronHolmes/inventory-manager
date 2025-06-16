@@ -98,9 +98,11 @@ export const tableMap = {
         "updated_at": dateTimeCol
     },
     "categories": {
-        "id": defaultCol,
+        "id": {... defaultCol, editable: false},
         "category": defaultCol,
+        "created_by": {... defaultCol, editable: false},
         "created_at": dateTimeCol,
+        "updated_by": {... defaultCol, editable: false},
         "updated_at": dateTimeCol
     },
     "sizes": {
