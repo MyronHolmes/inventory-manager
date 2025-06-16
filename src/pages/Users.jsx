@@ -74,7 +74,7 @@ export default function Users() {
   };
 
   return (
-    <div className="ag-theme-alpine p-4 space-y-6 bg-gray-900 min-h-screen text-white">
+    <div className="ag-theme-alpine p-4 space-y-6 min-h-screen">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-orange-500">User Management</h1>
         <button

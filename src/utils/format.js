@@ -1,6 +1,6 @@
 export function formatColumnName(key){
   return key
-    .split('_')                               
+    .split('_' || " ")                               
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) 
     .join(' ');
 }
@@ -10,4 +10,11 @@ export function reverseFormatColumnName(key){
   return words[0].toLowerCase() + words.slice(1).map(word =>
     word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
   ).join("");
+}
+
+export function capitalizeWords(str) {
+  return str
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 }

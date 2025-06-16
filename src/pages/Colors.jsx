@@ -7,6 +7,8 @@ import { createColDef } from "../utils/colDef";
 import { getCookie } from "../utils/auth";
 import DeleteButton from "../components/DeleteButton";
 import { refreshRowData } from "../utils/fetchHelpers";
+import AddButton from "../components/AddButton";
+import Notification from "../components/Notification";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -16,6 +18,9 @@ export default function Colors() {
   const [rowData, setRowData] = useState([]);
   const [columnDefs, setColumnDefs] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [message, setMessage] = useState([]);
+  const [messageType, setMessageType] = useState([]);
+  const [showMessage, setShowMessage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     color: "",
@@ -49,6 +54,24 @@ export default function Colors() {
     []
   );
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setFormData({
+      color: "",
+      created_by: user.id,
+    });
+  };
+
+  const closeMessage = () => {
+    setShowMessage(false);
+    setMessageType(null);
+    setMessage(null);
+  };
+  const openMessage = (show, type, message) => {
+    setShowMessage(show);
+    setMessageType(type);
+    setMessage(message);
+  };
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -65,14 +88,20 @@ export default function Colors() {
     });
 
     if (response.ok) {
+      const resData = await response.json();
       refreshRowData(location.pathname, setRowData);
-      setIsModalOpen(false);
-      setFormData({
-        color: "",
-        created_by: user.id,
-      });
+      closeModal();
+      openMessage(true, "success", resData.message);
     } else {
-      console.error("Error adding color");
+      const resData = await response.json();
+      openMessage(
+        true,
+        "fail",
+        resData.code === "23505"
+          ? `\'${formData.color}\' already exists.`
+          : `Failed to add \'${formData.color}\'.`
+      );
+      console.error("Error adding new color", resData);
     }
   };
 
@@ -90,7 +119,19 @@ export default function Colors() {
     });
 
     if (response.ok) {
+      const resData = await response.json();
       refreshRowData(location.pathname, setRowData);
+      openMessage(true, "success", resData.message);
+    } else {
+      const resData = await response.json();
+      openMessage(
+        true,
+        "fail",
+        resData.code === "23505"
+          ? `\'${formData.color}\' already exists.`
+          : `Failed to update color to \'${formData.color}\'.`
+      );
+      console.error("Failed to update color", resData);
     }
   }, []);
 
@@ -101,8 +142,7 @@ export default function Colors() {
 
   const onDelete = async (rows) => {
     const ids = rows.map((row) => row.id);
-
-    const response = fetch("/api/auth/colors", {
+    const response = await fetch("/api/auth/colors", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -111,24 +151,32 @@ export default function Colors() {
     });
 
     if (response.ok) {
+      const resData = await response.json();
       refreshRowData(location.pathname, setRowData);
+      openMessage(true, "success", resData.message);
+    } else {
+      const resData = await response.json();
+      openMessage(true, "fail", "Failed to delete color(s)");
+      console.error("Failed to delete color(s)", resData);
     }
   };
 
   return (
-    <div className="ag-theme-alpine p-4 space-y-6 bg-gray-900 min-h-screen text-white">
+    <div className="ag-theme-alpine p-4 space-y-6 min-h-screen">
+      {showMessage && (
+        <Notification
+          type={messageType}
+          message={message}
+          closeMessage={closeMessage}
+        />
+      )}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-orange-500">Color Management</h1>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
-        >
-          + Add Color
-        </button>
+        <AddButton setIsModalOpen={setIsModalOpen} />
       </div>
 
       <div
-        className="ag-theme-alpine p-4"
+        className="ag-theme-alpine p-3"
         style={{ height: 600, width: "100%" }}
       >
         <AgGridReact
@@ -142,7 +190,7 @@ export default function Colors() {
           onSelectionChanged={onSelectionChanged}
         />
       </div>
-      <div className="flex flex-row-reverse">
+      <div className="flex flex-row-reverse m-0 p-0">
         <DeleteButton selectedRows={selectedRows} onDelete={onDelete} />
       </div>
 
@@ -155,7 +203,7 @@ export default function Colors() {
                 Add New Color
               </h2>
               <button
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => closeModal()}
                 className="text-white hover:text-red-400 text-2xl font-bold"
               >
                 &times;
@@ -178,7 +226,7 @@ export default function Colors() {
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => closeModal()}
                   className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded"
                 >
                   Cancel

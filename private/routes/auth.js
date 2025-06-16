@@ -9,6 +9,7 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { capitalizeWords } from "../../src/utils/format.js";
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -187,6 +188,11 @@ router.get("/colors", async (req, res) => {
 
 router.post("/colors", async (req, res) => {
   console.log(req.body)
+  const { color } = req.body;
+  const postObj = {
+    ...req.body,
+    color: capitalizeWords(color)
+  };
   try {
     const response = await fetch(`${process.env.PGRST_DB_URL}colors`, {
       method: "POST",
@@ -194,7 +200,7 @@ router.post("/colors", async (req, res) => {
         "Content-Type": "application/json",
         Prefer: "return=representation",
       },
-      body: JSON.stringify(req.body),
+      body: JSON.stringify(postObj),
     });
 
     if (!response.ok) {
@@ -204,7 +210,7 @@ router.post("/colors", async (req, res) => {
     }
 
     const newColor = await response.json();
-    res.status(201).json({ message: "Color created", user: newColor[0] });
+    res.status(201).json({ message: `New color \'${newColor[0].color}\' successfully created.`, user: newColor[0] });
   } catch (err) {
     console.error("Color creation error:", err);
     res.status(500).json({ message: "Server error" });
@@ -215,7 +221,7 @@ router.put("/colors", async (req, res) => {
   const { id, color, updated_by } = req.body;
   const postObj = {
     id,
-    color,
+    color: capitalizeWords(color),
     updated_by
   };
 
@@ -236,7 +242,7 @@ router.put("/colors", async (req, res) => {
     }
 
     const newColor = await response.json();
-    res.status(201).json({ message: "Color created", user: newColor[0] });
+    res.status(201).json({ message: `Color successfully updated to \'${newColor[0].color}\'.`, user: newColor[0] });
   } catch (err) {
     console.error("Color creation error:", err);
     res.status(500).json({ message: "Server error" });
@@ -251,23 +257,25 @@ router.delete("/colors", async (req, res) => {
   }
 
   const idFilter = ids.map(id => `"${id}"`).join(",");
+  console.log(idFilter)
 
   try {
     const response = await fetch(`${process.env.PGRST_DB_URL}colors?id=in.(${idFilter})`, {
       method: "DELETE",
       headers: {
-        Prefer: "return=representation", // Optional: to get deleted rows back
+        Prefer: "return=representation", 
       },
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const error = await response.text();
       console.error("Error deleting from PostgREST:", error);
       return res.status(response.status).json(error);
     }
 
     const deleted = await response.json();
-    res.status(200).json({ message: "Deleted successfully", deleted });
+    console.log(deleted)
+    res.status(200).json({ message: "Color(s) deleted successfully.", deleted });
   } catch (err) {
     console.error("Server error deleting colors:", err);
     res.status(500).json({ message: "Server error" });

@@ -8,7 +8,7 @@ function DeleteButton({ selectedRows, onDelete }) {
       className={`p-2 rounded ${
         selectedRows.length === 0
           ? "opacity-50 cursor-not-allowed"
-          : "hover:bg-red-900"
+          : "hover:bg-red-900 cursor-pointer"
       }`}
       onClick={() => {
         onDelete?.(selectedRows);
