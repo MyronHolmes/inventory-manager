@@ -6,6 +6,8 @@ const navigation = [
   { name: 'Dashboard', href: '/', current: true },
   { name: 'Users', href: '/users', current: false },
   { name: 'Colors', href: '/colors', current: false },
+  { name: 'Categories', href: '/categories', current: false },
+
   
 ]
 

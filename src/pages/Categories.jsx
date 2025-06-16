@@ -12,7 +12,7 @@ import Notification from "../components/Notification";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-export default function Colors() {
+export default function Categories() {
   const user = JSON.parse(getCookie("user"));
   const location = useLocation();
   const [rowData, setRowData] = useState([]);
@@ -23,17 +23,17 @@ export default function Colors() {
   const [showMessage, setShowMessage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    color: "",
+    category: "",
     created_by: user.id,
   });
 
   useEffect(() => {
-    fetch("/api/auth/colors")
+    fetch("/api/auth/categories")
       .then((res) => res.json())
       .then((data) => {
-        if (data.colors.length > 0) {
-          setColumnDefs(createColDef(data.colors[0], "colors"));
-          setRowData(data.colors);
+        if (data.categories.length > 0) {
+          setColumnDefs(createColDef(data.categories[0], "categories"));
+          setRowData(data.categories);
         }
       });
   }, []);
@@ -57,7 +57,7 @@ export default function Colors() {
   const closeModal = () => {
     setIsModalOpen(false);
     setFormData({
-      color: "",
+      category: "",
       created_by: user.id,
     });
   };
@@ -81,7 +81,7 @@ export default function Colors() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("/api/auth/colors", {
+    const response = await fetch("/api/auth/category", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -98,21 +98,20 @@ export default function Colors() {
         true,
         "fail",
         resData.code === "23505"
-          ? `\'${formData.color}\' already exists.`
-          : `Failed to add \'${formData.color}\'.`
+          ? `\'${formData.category}\' already exists.`
+          : `Failed to add \'${formData.category}\'.`
       );
-      console.error("Error adding new color", resData);
+      console.error("Error adding new category", resData);
     }
   };
 
   const onRowValueChanged = useCallback(async (event) => {
-    console.log("Data after change is", event.data, event);
     const putObj = {
       ...event.data,
       updated_by: user.id,
     };
 
-    const response = await fetch("/api/auth/colors", {
+    const response = await fetch("/api/auth/categories", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(putObj),
@@ -128,10 +127,10 @@ export default function Colors() {
         true,
         "fail",
         resData.code === "23505"
-          ? `\'${formData.color}\' already exists.`
-          : `Failed to update color to \'${formData.color}\'.`
+          ? `\'${formData.category}\' already exists.`
+          : `Failed to update category to \'${formData.cateory}\'.`
       );
-      console.error("Failed to update color", resData);
+      console.error("Failed to update category", resData);
     }
   }, []);
 
@@ -142,7 +141,7 @@ export default function Colors() {
 
   const onDelete = async (rows) => {
     const ids = rows.map((row) => row.id);
-    const response = await fetch("/api/auth/colors", {
+    const response = await fetch("/api/auth/categories", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -156,8 +155,8 @@ export default function Colors() {
       openMessage(true, "success", resData.message);
     } else {
       const resData = await response.json();
-      openMessage(true, "fail", "Failed to delete color(s)");
-      console.error("Failed to delete color(s)", resData);
+      openMessage(true, "fail", "Failed to delete category(s)");
+      console.error("Failed to delete category(s)", resData);
     }
   };
 
@@ -171,8 +170,8 @@ export default function Colors() {
         />
       )}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-orange-500">Color Management</h1>
-        <AddButton setIsModalOpen={setIsModalOpen} table={"Colors"}/>
+        <h1 className="text-2xl font-bold text-orange-500">Category Management</h1>
+        <AddButton setIsModalOpen={setIsModalOpen} table={"Categories"} />
       </div>
 
       <div
@@ -200,7 +199,7 @@ export default function Colors() {
           <div className="bg-gray-800 p-6 rounded-lg w-full max-w-lg shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-orange-400">
-                Add New Color
+                Add New Category
               </h2>
               <button
                 onClick={() => closeModal()}
@@ -214,9 +213,9 @@ export default function Colors() {
               <div className="grid grid-cols-2 gap-4">
                 <input
                   type="text"
-                  name="color"
-                  placeholder="Color"
-                  value={formData.color}
+                  name="category"
+                  placeholder="Category"
+                  value={formData.category}
                   onChange={handleChange}
                   className="p-2 rounded bg-gray-700"
                   required
@@ -235,7 +234,7 @@ export default function Colors() {
                   type="submit"
                   className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded"
                 >
-                  Add Color
+                  Add Category
                 </button>
               </div>
             </form>
