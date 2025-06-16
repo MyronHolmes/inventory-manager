@@ -81,7 +81,7 @@ export default function Categories() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("/api/auth/category", {
+    const response = await fetch("/api/auth/categories", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -89,7 +89,7 @@ export default function Categories() {
 
     if (response.ok) {
       const resData = await response.json();
-      refreshRowData(location.pathname, setRowData);
+      refreshRowData(location.pathname, "categories", setRowData);
       closeModal();
       openMessage(true, "success", resData.message);
     } else {
@@ -119,7 +119,7 @@ export default function Categories() {
 
     if (response.ok) {
       const resData = await response.json();
-      refreshRowData(location.pathname, setRowData);
+      refreshRowData(location.pathname, "categories", setRowData);
       openMessage(true, "success", resData.message);
     } else {
       const resData = await response.json();
@@ -127,8 +127,8 @@ export default function Categories() {
         true,
         "fail",
         resData.code === "23505"
-          ? `\'${formData.category}\' already exists.`
-          : `Failed to update category to \'${formData.cateory}\'.`
+          ? `\'${putObj.category}\' already exists.`
+          : `Failed to update category to \'${putObj.category}\'.`
       );
       console.error("Failed to update category", resData);
     }
@@ -151,7 +151,7 @@ export default function Categories() {
 
     if (response.ok) {
       const resData = await response.json();
-      refreshRowData(location.pathname, setRowData);
+      refreshRowData(location.pathname, "categories", setRowData);
       openMessage(true, "success", resData.message);
     } else {
       const resData = await response.json();
@@ -171,7 +171,7 @@ export default function Categories() {
       )}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-orange-500">Category Management</h1>
-        <AddButton setIsModalOpen={setIsModalOpen} table={"Categories"} />
+        <AddButton setIsModalOpen={setIsModalOpen} table={"Category"} />
       </div>
 
       <div

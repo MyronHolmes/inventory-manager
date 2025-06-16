@@ -282,4 +282,128 @@ router.delete("/colors", async (req, res) => {
   }
 });
 
+// Categories Table
+router.get("/categories", async (req, res) => {
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}categories`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error(error);
+
+      return res.status(response.status).json(error);
+    }
+
+    const data = await response.json();
+    console.log(data);
+
+    res.status(200).json({ categories: data });
+  } catch (err) {
+    console.error("Categories error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/categories", async (req, res) => {
+  console.log(req.body)
+  const { category } = req.body;
+  const postObj = {
+    ...req.body,
+    category: capitalizeWords(category)
+  };
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}categories`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(postObj),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error(error);
+      return res.status(response.status).json(error);
+    }
+
+    const data = await response.json();
+    res.status(201).json({ message: `New category \'${data[0].category}\' successfully created.`, category: data[0] });
+  } catch (err) {
+    console.error("Category creation error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.put("/categories", async (req, res) => {
+  const { id, category, updated_by } = req.body;
+  const postObj = {
+    id,
+    category: capitalizeWords(category),
+    updated_by
+  };
+
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}categories?id=eq.${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(postObj),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error(error);
+      return res.status(response.status).json(error);
+    }
+
+    const data = await response.json();
+    res.status(201).json({ message: `Category successfully updated to \'${data[0].category}\'.`, category: data[0] });
+  } catch (err) {
+    console.error("Color creation error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.delete("/categories", async (req, res) => {
+  const { ids } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ message: "No IDs provided" });
+  }
+
+  const idFilter = ids.map(id => `"${id}"`).join(",");
+  console.log(idFilter)
+
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}categories?id=in.(${idFilter})`, {
+      method: "DELETE",
+      headers: {
+        Prefer: "return=representation", 
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error("Error deleting from PostgREST:", error);
+      return res.status(response.status).json(error);
+    }
+
+    const deleted = await response.json();
+    console.log(deleted)
+    res.status(200).json({ message: "Category(s) deleted successfully.", deleted });
+  } catch (err) {
+    console.error("Server error deleting categories:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;

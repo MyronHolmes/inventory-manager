@@ -89,7 +89,7 @@ export default function Colors() {
 
     if (response.ok) {
       const resData = await response.json();
-      refreshRowData(location.pathname, setRowData);
+      refreshRowData(location.pathname, "colors", setRowData);
       closeModal();
       openMessage(true, "success", resData.message);
     } else {
@@ -120,7 +120,7 @@ export default function Colors() {
 
     if (response.ok) {
       const resData = await response.json();
-      refreshRowData(location.pathname, setRowData);
+      refreshRowData(location.pathname, "colors", setRowData);
       openMessage(true, "success", resData.message);
     } else {
       const resData = await response.json();
@@ -128,8 +128,8 @@ export default function Colors() {
         true,
         "fail",
         resData.code === "23505"
-          ? `\'${formData.color}\' already exists.`
-          : `Failed to update color to \'${formData.color}\'.`
+          ? `\'${putObj.color}\' already exists.`
+          : `Failed to update color to \'${putObj.color}\'.`
       );
       console.error("Failed to update color", resData);
     }
@@ -152,7 +152,7 @@ export default function Colors() {
 
     if (response.ok) {
       const resData = await response.json();
-      refreshRowData(location.pathname, setRowData);
+      refreshRowData(location.pathname, "colors", setRowData);
       openMessage(true, "success", resData.message);
     } else {
       const resData = await response.json();
@@ -172,7 +172,7 @@ export default function Colors() {
       )}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-orange-500">Color Management</h1>
-        <AddButton setIsModalOpen={setIsModalOpen} table={"Colors"}/>
+        <AddButton setIsModalOpen={setIsModalOpen} table={"Color"}/>
       </div>
 
       <div
