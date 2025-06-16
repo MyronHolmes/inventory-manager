@@ -2,6 +2,7 @@ import { Dashboard } from './pages/Dashboard';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
 import Users from './pages/Users';
+import Colors from './pages/Colors';
 import AccessDenied from './pages/AccessDenied';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import NotFound from './pages/NotFound';
@@ -30,6 +31,9 @@ function AppWrapper() {
             <Route path="/logout" element={<Logout />} />
             <Route path="/users" element={
               authorized === "admin" ? <Users /> : <AccessDenied />
+            } />
+            <Route path='/colors' element={
+             ['admin', 'manager'].includes(authorized) ? <Colors /> : <AccessDenied />
             } />
             <Route path="*" element={<NotFound />} />
           </>

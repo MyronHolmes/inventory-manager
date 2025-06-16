@@ -4,7 +4,8 @@ export const columnsToHide = ["password"];
 
 const defaultCol = {
     cellDataType: "text",
-    cellStyle: { "whiteSpace": "pre" },
+    editable: true,
+    cellEditor: "agTextCellEditor",
     filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
@@ -61,6 +62,7 @@ const phoneCol = {
 }
 const numberCol = {
     cellDataType: "number",
+    cellEditor: 'agNumberCellEditor',
     filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
@@ -76,19 +78,23 @@ const enumStageCol = {
 
 export const tableMap = {
     "users": {
-        "id": defaultCol,
+        "id": {... defaultCol, editable: false},
         "first_name": defaultCol,
         "last_name": defaultCol,
         "email": defaultCol,
         "role": defaultCol,
         "password": defaultCol,
+        "created_by": {... defaultCol, editable: false},
         "created_at": dateTimeCol,
+        "updated_by": {... defaultCol, editable: false},
         "updated_at": dateTimeCol
     },
     "colors": {
-        "id": defaultCol,
+        "id": {... defaultCol, editable: false},
         "color": defaultCol,
+        "created_by": {... defaultCol, editable: false},
         "created_at": dateTimeCol,
+        "updated_by": {... defaultCol, editable: false},
         "updated_at": dateTimeCol
     },
     "categories": {
