@@ -32,7 +32,9 @@ function AppWrapper() {
             <Route path="/users" element={
               authorized === "admin" ? <Users /> : <AccessDenied />
             } />
-            <Route path='/colors' element={<Colors />} />
+            <Route path='/colors' element={
+             ['admin', 'manager'].includes(authorized) ? <Colors /> : <AccessDenied />
+            } />
             <Route path="*" element={<NotFound />} />
           </>
         ) : (
