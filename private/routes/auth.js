@@ -401,6 +401,7 @@ router.delete("/categories", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 // Sizes Table
 router.get("/sizes", async (req, res) => {
   try {
@@ -519,6 +520,128 @@ router.delete("/sizes", async (req, res) => {
     res.status(200).json({ message: "Size(s) deleted successfully.", deleted });
   } catch (err) {
     console.error("Error deleting size(s): ", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Products Table
+router.get("/products", async (req, res) => {
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}products`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Failed to fetch products: ", error);
+
+      return res.status(response.status).json(error);
+    }
+
+    const data = await response.json();
+
+
+    res.status(200).json({ products: data });
+  } catch (err) {
+    console.error("Error fetching products: ", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/products", async (req, res) => {
+  const { product } = req.body;
+  const postObj = {
+    ...req.body,
+    product: capitalizeWords(product)
+  };
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}products`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(postObj),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Failed to create product: ", error);
+      return res.status(response.status).json(error);
+    }
+
+    const data = await response.json();
+    res.status(201).json({ message: `New product \'${data[0].product}\' successfully created.`, product: data[0] });
+  } catch (err) {
+    console.error("Error creating product: ", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.put("/products", async (req, res) => {
+  const { id, product, updated_by } = req.body;
+  const postObj = {
+    id,
+    product: capitalizeWords(product),
+    updated_by
+  };
+
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}products?id=eq.${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(postObj),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Failed to update product: ", error);
+      return res.status(response.status).json(error);
+    }
+
+    const data = await response.json();
+    res.status(201).json({ message: `Product successfully updated to \'${data[0].product}\'.`, product: data[0] });
+  } catch (err) {
+    console.error("Error updating product: ", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.delete("/products", async (req, res) => {
+  const { ids } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ message: "No IDs provided" });
+  }
+
+  const idFilter = ids.map(id => `"${id}"`).join(",");
+
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}products?id=in.(${idFilter})`, {
+      method: "DELETE",
+      headers: {
+        Prefer: "return=representation", 
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error("Failed to delete product(s): ", error);
+      return res.status(response.status).json(error);
+    }
+
+    const deleted = await response.json();
+
+    res.status(200).json({ message: "Product(s) deleted successfully.", deleted });
+  } catch (err) {
+    console.error("Error deleting product(s): ", err);
     res.status(500).json({ message: "Server error" });
   }
 });

@@ -75,6 +75,16 @@ const enumStageCol = {
     filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
+const statusCol = {
+    cellDataType: "text",
+    editable: true,
+    cellEditor: "agSelectCellEditor",
+    cellEditorParams: {
+        values: ["active", "inactive", "out_of_stock"]
+    },
+    filter: "agTextColumnFilter",
+    filterParams: { buttons: ["clear"] }
+}
 
 export const tableMap = {
     "users": {
@@ -114,14 +124,16 @@ export const tableMap = {
         "updated_at": dateTimeCol
     },
     "products": {
-        "id": defaultCol,
+        "id": {... defaultCol, editable: false},
         "product": defaultCol,
         "description": defaultCol,
         "category_id": defaultCol,
         "photo_url": defaultCol,
         "quantity": numberCol,
-        "status": defaultCol,
+        "status": statusCol,
+        "created_by": {... defaultCol, editable: false},
         "created_at": dateTimeCol,
+        "updated_by": {... defaultCol, editable: false},
         "updated_at": dateTimeCol
     },
     "product_variants": {
