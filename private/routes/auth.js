@@ -149,7 +149,7 @@ router.get("/users", async (req, res) => {
     }
 
     const data = await response.json();
-    console.log(data);
+
 
     res.status(200).json({ users: data });
   } catch (err) {
@@ -171,23 +171,22 @@ router.get("/colors", async (req, res) => {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error(error);
+      console.error("Failed to fetch colors: ", error);
 
       return res.status(response.status).json(error);
     }
 
     const data = await response.json();
-    console.log(data);
+
 
     res.status(200).json({ colors: data });
   } catch (err) {
-    console.error("Colors error:", err);
+    console.error("Error fetching colors: ", err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 router.post("/colors", async (req, res) => {
-  console.log(req.body)
   const { color } = req.body;
   const postObj = {
     ...req.body,
@@ -205,14 +204,14 @@ router.post("/colors", async (req, res) => {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error(error);
+      console.error("Failed to create color: ", error);
       return res.status(response.status).json(error);
     }
 
     const newColor = await response.json();
     res.status(201).json({ message: `New color \'${newColor[0].color}\' successfully created.`, user: newColor[0] });
   } catch (err) {
-    console.error("Color creation error:", err);
+    console.error("Error creating color: ", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -237,14 +236,14 @@ router.put("/colors", async (req, res) => {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error(error);
+      console.error("Failed to update color: ", error);
       return res.status(response.status).json(error);
     }
 
     const newColor = await response.json();
     res.status(201).json({ message: `Color successfully updated to \'${newColor[0].color}\'.`, user: newColor[0] });
   } catch (err) {
-    console.error("Color creation error:", err);
+    console.error("Error updating color: ", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -257,7 +256,6 @@ router.delete("/colors", async (req, res) => {
   }
 
   const idFilter = ids.map(id => `"${id}"`).join(",");
-  console.log(idFilter)
 
   try {
     const response = await fetch(`${process.env.PGRST_DB_URL}colors?id=in.(${idFilter})`, {
@@ -269,15 +267,15 @@ router.delete("/colors", async (req, res) => {
 
     if (!response.ok) {
       const error = await response.text();
-      console.error("Error deleting from PostgREST:", error);
+      console.error("Failed to delete color(s): ", error);
       return res.status(response.status).json(error);
     }
 
     const deleted = await response.json();
-    console.log(deleted)
+
     res.status(200).json({ message: "Color(s) deleted successfully.", deleted });
   } catch (err) {
-    console.error("Server error deleting colors:", err);
+    console.error("Error deleting color(s): ", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -295,23 +293,22 @@ router.get("/categories", async (req, res) => {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error(error);
+      console.error("Failed to fetch categories: ", error);
 
       return res.status(response.status).json(error);
     }
 
     const data = await response.json();
-    console.log(data);
+
 
     res.status(200).json({ categories: data });
   } catch (err) {
-    console.error("Categories error:", err);
+    console.error("Error fetching categories: ", err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 router.post("/categories", async (req, res) => {
-  console.log(req.body)
   const { category } = req.body;
   const postObj = {
     ...req.body,
@@ -329,14 +326,14 @@ router.post("/categories", async (req, res) => {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error(error);
+      console.error("Failed to create category: ", error);
       return res.status(response.status).json(error);
     }
 
     const data = await response.json();
     res.status(201).json({ message: `New category \'${data[0].category}\' successfully created.`, category: data[0] });
   } catch (err) {
-    console.error("Category creation error:", err);
+    console.error("Error creating category: ", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -361,14 +358,14 @@ router.put("/categories", async (req, res) => {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error(error);
+      console.error("Failed to update category: ", error);
       return res.status(response.status).json(error);
     }
 
     const data = await response.json();
     res.status(201).json({ message: `Category successfully updated to \'${data[0].category}\'.`, category: data[0] });
   } catch (err) {
-    console.error("Color creation error:", err);
+    console.error("Error updating category: ", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -381,7 +378,6 @@ router.delete("/categories", async (req, res) => {
   }
 
   const idFilter = ids.map(id => `"${id}"`).join(",");
-  console.log(idFilter)
 
   try {
     const response = await fetch(`${process.env.PGRST_DB_URL}categories?id=in.(${idFilter})`, {
@@ -393,15 +389,136 @@ router.delete("/categories", async (req, res) => {
 
     if (!response.ok) {
       const error = await response.text();
-      console.error("Error deleting from PostgREST:", error);
+      console.error("Failed to delete category(s): ", error);
       return res.status(response.status).json(error);
     }
 
     const deleted = await response.json();
-    console.log(deleted)
+
     res.status(200).json({ message: "Category(s) deleted successfully.", deleted });
   } catch (err) {
-    console.error("Server error deleting categories:", err);
+    console.error("Error deleting category(s): ", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+// Sizes Table
+router.get("/sizes", async (req, res) => {
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}sizes`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Failed to fetch sizes: ", error);
+
+      return res.status(response.status).json(error);
+    }
+
+    const data = await response.json();
+
+
+    res.status(200).json({ sizes: data });
+  } catch (err) {
+    console.error("Error fetching sizes: ", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/sizes", async (req, res) => {
+  const { size } = req.body;
+  const postObj = {
+    ...req.body,
+    size: capitalizeWords(size)
+  };
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}sizes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(postObj),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Failed to create size: ", error);
+      return res.status(response.status).json(error);
+    }
+
+    const data = await response.json();
+    res.status(201).json({ message: `New size \'${data[0].size}\' successfully created.`, size: data[0] });
+  } catch (err) {
+    console.error("Error creating size: ", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.put("/sizes", async (req, res) => {
+  const { id, size, updated_by } = req.body;
+  const postObj = {
+    id,
+    size: capitalizeWords(size),
+    updated_by
+  };
+
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}sizes?id=eq.${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(postObj),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Failed to update size: ", error);
+      return res.status(response.status).json(error);
+    }
+
+    const data = await response.json();
+    res.status(201).json({ message: `Size successfully updated to \'${data[0].size}\'.`, size: data[0] });
+  } catch (err) {
+    console.error("Error updating size: ", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.delete("/sizes", async (req, res) => {
+  const { ids } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ message: "No IDs provided" });
+  }
+
+  const idFilter = ids.map(id => `"${id}"`).join(",");
+
+  try {
+    const response = await fetch(`${process.env.PGRST_DB_URL}sizes?id=in.(${idFilter})`, {
+      method: "DELETE",
+      headers: {
+        Prefer: "return=representation", 
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error("Failed to delete size(s): ", error);
+      return res.status(response.status).json(error);
+    }
+
+    const deleted = await response.json();
+
+    res.status(200).json({ message: "Size(s) deleted successfully.", deleted });
+  } catch (err) {
+    console.error("Error deleting size(s): ", err);
     res.status(500).json({ message: "Server error" });
   }
 });
