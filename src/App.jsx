@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import NavBar from "./components/NavBar";
 import { getCookie } from "./utils/auth";
 import Categories from "./pages/Categories";
+import Sizes from "./pages/Sizes";
 
 function AppWrapper() {
   const location = useLocation();
@@ -58,6 +59,16 @@ function AppWrapper() {
               element={
                 ["admin", "manager"].includes(authorized) ? (
                   <Categories />
+                ) : (
+                  <AccessDenied />
+                )
+              }
+            />
+            <Route
+              path="/sizes"
+              element={
+                ["admin", "manager"].includes(authorized) ? (
+                  <Sizes />
                 ) : (
                   <AccessDenied />
                 )
