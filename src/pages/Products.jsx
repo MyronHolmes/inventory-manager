@@ -9,6 +9,7 @@ import DeleteButton from "../components/DeleteButton";
 import { refreshRowData } from "../utils/fetchHelpers";
 import AddButton from "../components/AddButton";
 import Notification from "../components/Notification";
+import { formatColumnName } from "../utils/format";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -17,6 +18,7 @@ export default function Products() {
   const location = useLocation();
   const [rowData, setRowData] = useState([]);
   const [columnDefs, setColumnDefs] = useState([]);
+  const [catData, setCatData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [message, setMessage] = useState([]);
   const [messageType, setMessageType] = useState([]);
@@ -30,10 +32,37 @@ export default function Products() {
   useEffect(() => {
     fetch("/api/auth/products")
       .then((res) => res.json())
-      .then((data) => {
-        if (data.products.length > 0) {
-          setColumnDefs(createColDef(data.products[0], "products"));
-          setRowData(data.products);
+      .then((prodData) => {
+        console.log(prodData);
+        setCatData(prodData.categories);
+        const categoryArray = prodData.categories.map((cat) => cat.category);
+
+        if (prodData.products.length > 0) {
+          const rawCols = createColDef(prodData.products[0], "products");
+
+          const updatedCols = rawCols.map((col) => {
+            if (col.field === "category") {
+              return {
+                ...col,
+                cellEditorParams: {
+                  values: categoryArray,
+                },
+              };
+            }
+            if (col.field === "status") {
+              return {
+                ...col,
+                  cellEditorParams: {
+                  values: prodData.status,
+                },
+                valueFormatter: params => formatColumnName(params.value) 
+              }
+            }
+            return col;
+          });
+
+          setColumnDefs(updatedCols);
+          setRowData(prodData.products);
         }
       });
   }, []);
@@ -53,12 +82,17 @@ export default function Products() {
     }),
     []
   );
-
+console.log(columnDefs)
   const closeModal = () => {
     setIsModalOpen(false);
     setFormData({
       product: "",
-      created_by: user.id,
+      description: "",
+      category: "",
+      quantity: "",
+      status: "",
+      photo_url: "",
+      updated_by: user.id,
     });
   };
 
@@ -170,7 +204,9 @@ export default function Products() {
         />
       )}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-orange-500">Products Management</h1>
+        <h1 className="text-2xl font-bold text-orange-500">
+          Products Management
+        </h1>
         <AddButton setIsModalOpen={setIsModalOpen} table={"Products"} />
       </div>
 
@@ -221,7 +257,43 @@ export default function Products() {
                   required
                 />
               </div>
-
+              <div className="grid grid-cols-2 gap-4">
+                <textarea
+                  name="description"
+                  placeholder="Description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  className="p-2 rounded bg-gray-700"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <select
+                  name="category"
+                  placeholder="Category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="p-2 rounded bg-gray-700"
+                  required
+                  >
+                 <option value="" disabled>Select A Category</option>
+                  {catData.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="number"
+                  name="quantity"
+                  placeholder="Quantity"
+                  value={formData.quantity}
+                  onChange={handleChange}
+                  className="p-2 rounded bg-gray-700"
+                  required
+                />
+              </div>
               <div className="flex justify-end gap-2">
                 <button
                   type="button"

@@ -9,7 +9,6 @@ const defaultCol = {
     filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
-
 const dateTimeCol = {
     cellDataType: "dateString",
     filter: "agDateColumnFilter",
@@ -63,6 +62,7 @@ const phoneCol = {
 const numberCol = {
     cellDataType: "number",
     cellEditor: 'agNumberCellEditor',
+    editable: true,
     filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
@@ -80,12 +80,21 @@ const statusCol = {
     editable: true,
     cellEditor: "agSelectCellEditor",
     cellEditorParams: {
-        values: ["active", "inactive", "out_of_stock"]
+        values: []
     },
     filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
-
+const categoryCol = {
+    cellDataType: "text",
+    editable: true,
+    cellEditor: "agSelectCellEditor",
+    cellEditorParams: {
+        values: []
+    },
+    filter: "agTextColumnFilter",
+    filterParams: { buttons: ["clear"] }
+}
 export const tableMap = {
     "users": {
         "id": {... defaultCol, editable: false},
@@ -123,11 +132,11 @@ export const tableMap = {
         "updated_by": {... defaultCol, editable: false},
         "updated_at": dateTimeCol
     },
-    "products": {
+     "products": {
         "id": {... defaultCol, editable: false},
         "product": defaultCol,
         "description": defaultCol,
-        "category_id": defaultCol,
+        "category": categoryCol,
         "photo_url": defaultCol,
         "quantity": numberCol,
         "status": statusCol,
