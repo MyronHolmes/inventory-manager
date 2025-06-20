@@ -137,7 +137,6 @@ export const tableMap = {
         "product": defaultCol,
         "description": defaultCol,
         "category": categoryCol,
-        "photo_url": defaultCol,
         "quantity": numberCol,
         "status": statusCol,
         "created_by": {... defaultCol, editable: false},

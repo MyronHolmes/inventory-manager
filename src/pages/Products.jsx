@@ -33,7 +33,6 @@ export default function Products() {
     fetch("/api/auth/products")
       .then((res) => res.json())
       .then((prodData) => {
-        console.log(prodData);
         setCatData(prodData.categories);
         const categoryArray = prodData.categories.map((cat) => cat.category);
 
@@ -82,7 +81,6 @@ export default function Products() {
     }),
     []
   );
-console.log(columnDefs)
   const closeModal = () => {
     setIsModalOpen(false);
     setFormData({
@@ -91,7 +89,6 @@ console.log(columnDefs)
       category: "",
       quantity: "",
       status: "",
-      photo_url: "",
       updated_by: user.id,
     });
   };
@@ -229,53 +226,56 @@ console.log(columnDefs)
         <DeleteButton selectedRows={selectedRows} onDelete={onDelete} />
       </div>
 
-      {/* Modal */}
+      {/* Add Product Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-sm ">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-sm">
           <div className="bg-gray-800 p-6 rounded-lg w-full max-w-lg shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-orange-400">
                 Add New Product
               </h2>
               <button
-                onClick={() => closeModal()}
+                onClick={closeModal}
                 className="text-white hover:text-red-400 text-2xl font-bold"
+                aria-label="Close modal"
               >
                 &times;
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div>
                 <input
                   type="text"
                   name="product"
-                  placeholder="Product"
+                  placeholder="Product Name"
                   value={formData.product}
                   onChange={handleChange}
-                  className="p-2 rounded bg-gray-700"
+                  className="w-full p-2 rounded bg-gray-700 placeholder-gray-400"
                   required
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              
+              <div>
                 <textarea
                   name="description"
-                  placeholder="Description"
+                  placeholder="Description (optional)"
                   value={formData.description}
                   onChange={handleChange}
-                  className="p-2 rounded bg-gray-700"
+                  className="w-full p-2 rounded bg-gray-700 placeholder-gray-400 resize-none"
+                  rows="3"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              
+              <div>
                 <select
                   name="category"
-                  placeholder="Category"
                   value={formData.category}
                   onChange={handleChange}
-                  className="p-2 rounded bg-gray-700"
+                  className="w-full p-2 rounded bg-gray-700"
                   required
-                  >
-                 <option value="" disabled>Select A Category</option>
+                >
+                  <option value="" disabled>Select A Category</option>
                   {catData.map((cat) => (
                     <option key={cat.id} value={cat.id}>
                       {cat.category}
@@ -283,28 +283,31 @@ console.log(columnDefs)
                   ))}
                 </select>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              
+              <div>
                 <input
                   type="number"
                   name="quantity"
                   placeholder="Quantity"
                   value={formData.quantity}
                   onChange={handleChange}
-                  className="p-2 rounded bg-gray-700"
+                  className="w-full p-2 rounded bg-gray-700 placeholder-gray-400"
+                  min="0"
                   required
                 />
               </div>
-              <div className="flex justify-end gap-2">
+              
+              <div className="flex justify-end gap-2 pt-4">
                 <button
                   type="button"
-                  onClick={() => closeModal()}
-                  className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded"
+                  onClick={closeModal}
+                  className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded"
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded transition-colors"
                 >
                   Add Product
                 </button>

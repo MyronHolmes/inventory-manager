@@ -10,7 +10,7 @@ import express, { response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { capitalizeWords } from "../../src/utils/format.js";
-import { Description } from "@headlessui/react";
+import { makeRequest } from "../../src/utils/fetchHelpers.js";
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -564,199 +564,125 @@ router.delete("/sizes", async (req, res) => {
 // Products Table
 router.get("/products", async (req, res) => {
   try {
-    const swagger = await fetch(process.env.PGRST_DB_URL)
+    const swagger = await fetch(process.env.PGRST_DB_URL);
     const api = await swagger.json();
-    const status = api.definitions.products.properties.status.enum;
-    const catResponse = await fetch(
-      `${process.env.PGRST_DB_URL}categories?select=id,category`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Prefer: "return=representation",
-        },
-      }
-    );
-    if (!catResponse.ok) {
-      const error = await response.json();
-      console.error("Failed to fetch categories: ", error);
-      return res.status(response.status).json(error);
-    }
-    const categories = await catResponse.json();
+    const status = api.definitions?.products?.properties?.status?.enum || [];
 
-    const response = await fetch(`${process.env.PGRST_DB_URL}products_view`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Prefer: "return=representation",
-      },
+    const [categories, products] = await Promise.all([
+      makeRequest(`${process.env.PGRST_DB_URL}categories?select=id,category`),
+      makeRequest(`${process.env.PGRST_DB_URL}products_view`),
+    ]);
+
+    res.status(200).json({
+      products,
+      categories,
+      status,
     });
-    if (!response.ok) {
-      const error = await response.json();
-      console.error("Failed to fetch products: ", error);
-      return res.status(response.status).json(error);
-    }
-
-    const products = await response.json();
-    res.status(200).json({ products, categories, status });
   } catch (err) {
     console.error("Error fetching products: ", err);
-    res.status(500).json({ message: "Server error" });
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
 router.post("/products", async (req, res) => {
   try {
-    const {
-      product,
-      description,
-      category,
-      quantity,
-      photo_url,
-      updated_by,
-    } = req.body;
-    console.log(category)
-
+    const { product, description, category, quantity, updated_by } = req.body;
     const postObj = {
       product: capitalizeWords(product),
       category_id: category,
       description,
       quantity,
-      photo_url,
       updated_by,
     };
 
-    const response = await fetch(`${process.env.PGRST_DB_URL}products`, {
+    const data = await makeRequest(`${process.env.PGRST_DB_URL}products`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Prefer: "return=representation",
-      },
       body: JSON.stringify(postObj),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      console.error("Failed to create product: ", error);
-      return res.status(response.status).json(error);
-    }
-
-    const data = await response.json();
     res.status(201).json({
       message: `New product \'${data[0].product}\' successfully created.`,
       product: data[0],
     });
   } catch (err) {
     console.error("Error creating product: ", err);
-    res.status(500).json({ message: "Server error" });
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
 router.put("/products", async (req, res) => {
-  console.log(req.body)
-  const {
-    id,
-    product,
-    description,
-    category,
-    quantity,
-    status,
-    photo_url,
-    updated_by,
-  } = req.body;
-
-  const catResponse = await fetch(
-    `${process.env.PGRST_DB_URL}categories?select=id,category`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Prefer: "return=representation",
-      },
-    }
-  );
-  if (!catResponse.ok) {
-    const error = await response.json();
-    console.error("Failed to fetch categories: ", error);
-    return res.status(response.status).json(error);
-  }
-  const categories = await catResponse.json();
-
-  const postObj = {
-    id,
-    product: capitalizeWords(product),
-    description,
-    category_id: category,
-    quantity: quantity,
-    status: status,
-    photo_url: photo_url,
-    updated_by: updated_by,
-  };
-
   try {
-    const response = await fetch(
+    const { id, product, description, category, quantity, status, updated_by } =
+      req.body;
+
+    const catData =await makeRequest(
+      `${process.env.PGRST_DB_URL}categories?select=id,category&category=eq.${category}`
+    );
+    if (!catData) {
+      return res
+        .status(400)
+        .json({ message: `Category '${category}' not found` });
+    }
+    console.log(catData)
+    const postObj = {
+      id,
+      product: capitalizeWords(product),
+      category_id: catData[0].id,
+      description,
+      quantity: quantity,
+      status: status,
+      updated_by: updated_by,
+    };
+
+    const data = await makeRequest(
       `${process.env.PGRST_DB_URL}products?id=eq.${id}`,
       {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Prefer: "return=representation",
-        },
         body: JSON.stringify(postObj),
       }
     );
 
-    if (!response.ok) {
-      const error = await response.json();
-      console.error("Failed to update product: ", error);
-      return res.status(response.status).json(error);
-    }
-
-    const data = await response.json();
-    res.status(201).json({
-      message: `Product successfully updated to \'${data[0].product}\'.`,
+    res.status(200).json({
+      message: `Product successfully updated to '${data[0].product}'.`,
       product: data[0],
     });
   } catch (err) {
     console.error("Error updating product: ", err);
-    res.status(500).json({ message: "Server error" });
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
 router.delete("/products", async (req, res) => {
-  const { ids } = req.body;
-
-  if (!Array.isArray(ids) || ids.length === 0) {
-    return res.status(400).json({ message: "No IDs provided" });
-  }
-
-  const idFilter = ids.map((id) => `"${id}"`).join(",");
-
   try {
-    const response = await fetch(
+    const { ids } = req.body;
+
+    const idFilter = ids.map((id) => `"${id}"`).join(",");
+    const deleted = await makeRequest(
       `${process.env.PGRST_DB_URL}products?id=in.(${idFilter})`,
       {
         method: "DELETE",
-        headers: {
-          Prefer: "return=representation",
-        },
+        headers: { Prefer: "return=representation" },
       }
     );
-
-    if (!response.ok) {
-      const error = await response.text();
-      console.error("Failed to delete product(s): ", error);
-      return res.status(response.status).json(error);
-    }
-
-    const deleted = await response.json();
 
     res
       .status(200)
       .json({ message: "Product(s) deleted successfully.", deleted });
   } catch (err) {
     console.error("Error deleting product(s): ", err);
-    res.status(500).json({ message: "Server error" });
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
