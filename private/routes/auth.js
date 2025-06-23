@@ -621,7 +621,7 @@ router.put("/products", async (req, res) => {
     const { id, product, description, category, quantity, status, updated_by } =
       req.body;
 
-    const catData =await makeRequest(
+    const catData = await makeRequest(
       `${process.env.PGRST_DB_URL}categories?select=id,category&category=eq.${category}`
     );
     if (!catData) {
@@ -629,7 +629,7 @@ router.put("/products", async (req, res) => {
         .status(400)
         .json({ message: `Category '${category}' not found` });
     }
-    console.log(catData)
+    console.log(catData);
     const postObj = {
       id,
       product: capitalizeWords(product),
@@ -686,4 +686,131 @@ router.delete("/products", async (req, res) => {
   }
 });
 
+// Product Variants Table
+router.get("/inventory", async (req, res) => {
+  try {
+    const [inventory, products, colors, sizes] = await Promise.all([
+      makeRequest(`${process.env.PGRST_DB_URL}product_variants_view`),
+      makeRequest(`${process.env.PGRST_DB_URL}products?select=id,product`),
+      makeRequest(`${process.env.PGRST_DB_URL}colors?select=id,color`),
+      makeRequest(`${process.env.PGRST_DB_URL}sizes?select=id,size`),
+    ]);
+
+    res.status(200).json({
+      inventory,
+      products,
+      colors,
+      sizes,
+    });
+  } catch (err) {
+    console.error("Error fetching inventory: ", err);
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+router.post("/inventory", async (req, res) => {
+  try {
+    const { product, color, size, quantity, createdBy } = req.body;
+    const postObj = {
+      product_id: product,
+      color_id: color,
+      size_id: size,
+      quantity,
+      created_by: createdBy
+    }
+    console.log(postObj)
+    const data = await makeRequest(
+      `${process.env.PGRST_DB_URL}product_variants`,
+      {
+        method: "POST",
+        body: JSON.stringify(postObj),
+      }
+    );
+    console.log(data)
+
+    res.status(201).json({
+      message: `New product variant successfully created.`,
+      product: data[0],
+    });
+  } catch (err) {
+    console.error("Error creating product variant: ", err);
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+router.put("/inventory", async (req, res) => {
+  try {
+    const { id, product, color, size, quantity, updatedBy } = req.body;
+
+    const [prodData, colorData, sizeData] = await Promise.all([
+      makeRequest(
+        `${process.env.PGRST_DB_URL}products?select=id,product&product=eq.${product}`
+      ),
+      makeRequest(
+        `${process.env.PGRST_DB_URL}colors?select=id,color&color=eq.${color}`
+      ),
+      makeRequest(
+        `${process.env.PGRST_DB_URL}sizes?select=id,size&size=eq.${size}`
+      ),
+    ]);
+    const postObj = {
+      id,
+      product_id: prodData[0].id,
+      color_id: colorData[0].id,
+      size_id: sizeData[0].id,
+      quantity,
+      updated_by: updatedBy,
+    };
+
+    const data = await makeRequest(
+      `${process.env.PGRST_DB_URL}product_variants?id=eq.${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(postObj),
+      }
+    );
+
+    res.status(200).json({
+      message: `Product Varient successfully updated.`,
+      product: data[0],
+    });
+  } catch (err) {
+    console.error("Error updating product variant: ", err);
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+router.delete("/inventory", async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    const idFilter = ids.map((id) => `"${id}"`).join(",");
+    const deleted = await makeRequest(
+      `${process.env.PGRST_DB_URL}product_variants?id=in.(${idFilter})`,
+      {
+        method: "DELETE",
+        headers: { Prefer: "return=representation" },
+      }
+    );
+
+    res
+      .status(200)
+      .json({ message: "Product Variant(s) deleted successfully.", deleted });
+  } catch (err) {
+    console.error("Error deleting product variant(s): ", err);
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
+  }
+});
 export default router;
