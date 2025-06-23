@@ -51,11 +51,11 @@ export default function Products() {
             if (col.field === "status") {
               return {
                 ...col,
-                  cellEditorParams: {
+                cellEditorParams: {
                   values: prodData.status,
                 },
-                valueFormatter: params => formatColumnName(params.value) 
-              }
+                valueFormatter: (params) => formatColumnName(params.value),
+              };
             }
             return col;
           });
@@ -128,7 +128,7 @@ export default function Products() {
       openMessage(
         true,
         "fail",
-        resData.code === "23505"
+        resData.error.code === "23505"
           ? `\'${formData.product}\' already exists.`
           : `Failed to add \'${formData.product}\'.`
       );
@@ -157,7 +157,7 @@ export default function Products() {
       openMessage(
         true,
         "fail",
-        resData.code === "23505"
+        resData.error.code === "23505"
           ? `\'${putObj.product}\' already exists.`
           : `Failed to update product to \'${putObj.product}\'.`
       );
@@ -182,6 +182,7 @@ export default function Products() {
 
     if (response.ok) {
       const resData = await response.json();
+      console.log(rows);
       refreshRowData(location.pathname, "product", setRowData);
       openMessage(true, "success", resData.message);
     } else {
@@ -255,7 +256,7 @@ export default function Products() {
                   required
                 />
               </div>
-              
+
               <div>
                 <textarea
                   name="description"
@@ -266,7 +267,7 @@ export default function Products() {
                   rows="3"
                 />
               </div>
-              
+
               <div>
                 <select
                   name="category"
@@ -275,7 +276,9 @@ export default function Products() {
                   className="w-full p-2 rounded bg-gray-700"
                   required
                 >
-                  <option value="" disabled>Select A Category</option>
+                  <option value="" disabled>
+                    Select A Category
+                  </option>
                   {catData.map((cat) => (
                     <option key={cat.id} value={cat.id}>
                       {cat.category}
@@ -283,7 +286,7 @@ export default function Products() {
                   ))}
                 </select>
               </div>
-              
+
               <div>
                 <input
                   type="number"
@@ -296,7 +299,7 @@ export default function Products() {
                   required
                 />
               </div>
-              
+
               <div className="flex justify-end gap-2 pt-4">
                 <button
                   type="button"
