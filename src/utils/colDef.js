@@ -9,7 +9,6 @@ const defaultCol = {
     filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
-
 const dateTimeCol = {
     cellDataType: "dateString",
     filter: "agDateColumnFilter",
@@ -63,6 +62,7 @@ const phoneCol = {
 const numberCol = {
     cellDataType: "number",
     cellEditor: 'agNumberCellEditor',
+    editable: true,
     filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
@@ -75,7 +75,26 @@ const enumStageCol = {
     filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
-
+const statusCol = {
+    cellDataType: "text",
+    editable: true,
+    cellEditor: "agSelectCellEditor",
+    cellEditorParams: {
+        values: []
+    },
+    filter: "agTextColumnFilter",
+    filterParams: { buttons: ["clear"] }
+}
+const categoryCol = {
+    cellDataType: "text",
+    editable: true,
+    cellEditor: "agSelectCellEditor",
+    cellEditorParams: {
+        values: []
+    },
+    filter: "agTextColumnFilter",
+    filterParams: { buttons: ["clear"] }
+}
 export const tableMap = {
     "users": {
         "id": {... defaultCol, editable: false},
@@ -113,15 +132,16 @@ export const tableMap = {
         "updated_by": {... defaultCol, editable: false},
         "updated_at": dateTimeCol
     },
-    "products": {
-        "id": defaultCol,
+     "products": {
+        "id": {... defaultCol, editable: false},
         "product": defaultCol,
         "description": defaultCol,
-        "category_id": defaultCol,
-        "photo_url": defaultCol,
+        "category": categoryCol,
         "quantity": numberCol,
-        "status": defaultCol,
+        "status": statusCol,
+        "created_by": {... defaultCol, editable: false},
         "created_at": dateTimeCol,
+        "updated_by": {... defaultCol, editable: false},
         "updated_at": dateTimeCol
     },
     "product_variants": {
