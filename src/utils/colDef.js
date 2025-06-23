@@ -75,17 +75,7 @@ const enumStageCol = {
     filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
-const statusCol = {
-    cellDataType: "text",
-    editable: true,
-    cellEditor: "agSelectCellEditor",
-    cellEditorParams: {
-        values: []
-    },
-    filter: "agTextColumnFilter",
-    filterParams: { buttons: ["clear"] }
-}
-const categoryCol = {
+const agSelectCol = {
     cellDataType: "text",
     editable: true,
     cellEditor: "agSelectCellEditor",
@@ -136,21 +126,23 @@ export const tableMap = {
         "id": {... defaultCol, editable: false},
         "product": defaultCol,
         "description": defaultCol,
-        "category": categoryCol,
+        "category": agSelectCol,
         "quantity": numberCol,
-        "status": statusCol,
+        "status": agSelectCol,
         "created_by": {... defaultCol, editable: false},
         "created_at": dateTimeCol,
         "updated_by": {... defaultCol, editable: false},
         "updated_at": dateTimeCol
     },
     "product_variants": {
-        "id": defaultCol,
-        "product_id": defaultCol,
-        "size_id": defaultCol,
-        "color_id": defaultCol,
+        "id": {... defaultCol, editable: false},
+        "product": agSelectCol,
+        "size": agSelectCol,
+        "color": agSelectCol,
         "quantity": numberCol,
+        "created_by": {... defaultCol, editable: false},
         "created_at": dateTimeCol,
+        "updated_by": {... defaultCol, editable: false},
         "updated_at": dateTimeCol
     }
 }

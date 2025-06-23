@@ -17,6 +17,7 @@ import { getCookie } from "./utils/auth";
 import Categories from "./pages/Categories";
 import Sizes from "./pages/Sizes";
 import Products from "./pages/Products";
+import Inventory from "./pages/Inventory";
 
 function AppWrapper() {
   const location = useLocation();
@@ -85,6 +86,7 @@ function AppWrapper() {
                 )
               }
             />
+            <Route path="/inventory" element={<Inventory />} />
             <Route path="*" element={<NotFound />} />
           </>
         ) : (
