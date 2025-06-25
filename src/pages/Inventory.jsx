@@ -9,7 +9,6 @@ import DeleteButton from "../components/DeleteButton";
 import { refreshRowData } from "../utils/fetchHelpers";
 import AddButton from "../components/AddButton";
 import Notification from "../components/Notification";
-import { formatColumnName } from "../utils/format";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -26,7 +25,12 @@ export default function Inventory() {
   const [messageType, setMessageType] = useState([]);
   const [showMessage, setShowMessage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    product: "",
+    color: "",
+    size: "",
+    quantity: "",
+  });
 
   useEffect(() => {
     fetch("/api/auth/inventory")
@@ -97,9 +101,8 @@ export default function Inventory() {
   );
   const closeModal = () => {
     setIsModalOpen(false);
-    setFormData({
-    });
-    console.log(formData)
+    setFormData({ product: "", color: "", size: "", quantity: "" });
+    console.log(formData);
   };
 
   const closeMessage = () => {
@@ -121,6 +124,7 @@ export default function Inventory() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
     const response = await fetch("/api/auth/inventory", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -134,12 +138,13 @@ export default function Inventory() {
       openMessage(true, "success", resData.message);
     } else {
       const resData = await response.json();
+      const product = prodData.find((p) => p.id = formData.product ).product;
       openMessage(
         true,
         "fail",
         resData.error.code === "23505"
-          ? `\'${formData.product}\' already exists.`
-          : `Failed to add \'${formData.product}\'.`
+          ? `\This '${product}\' variation already exists.`
+          : `Failed to add this \'${product}\' variation.`
       );
       console.error("Error adding new product", resData);
     }
