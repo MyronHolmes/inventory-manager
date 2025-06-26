@@ -9,16 +9,17 @@ import DeleteButton from "../components/DeleteButton";
 import { refreshRowData } from "../utils/fetchHelpers";
 import AddButton from "../components/AddButton";
 import Notification from "../components/Notification";
-import { formatColumnName } from "../utils/format";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-export default function Products() {
+export default function Inventory() {
   const user = JSON.parse(getCookie("user"));
   const location = useLocation();
   const [rowData, setRowData] = useState([]);
   const [columnDefs, setColumnDefs] = useState([]);
-  const [catData, setCatData] = useState([]);
+  const [prodData, setProdData] = useState([]);
+  const [colorData, setColorData] = useState([]);
+  const [sizeData, setSizeData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [message, setMessage] = useState([]);
   const [messageType, setMessageType] = useState([]);
@@ -26,42 +27,59 @@ export default function Products() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     product: "",
-    created_by: user.id,
+    color: "",
+    size: "",
+    quantity: "",
   });
 
   useEffect(() => {
-    fetch("/api/auth/products")
+    fetch("/api/auth/inventory")
       .then((res) => res.json())
-      .then((prodData) => {
-        setCatData(prodData.categories);
-        const categoryArray = prodData.categories.map((cat) => cat.category);
+      .then((inventoryData) => {
+        console.log(inventoryData);
+        setProdData(inventoryData.products);
+        const prodArray = inventoryData.products.map((p) => p.product);
+        setColorData(inventoryData.colors);
+        const colorArray = inventoryData.colors.map((c) => c.color);
+        setSizeData(inventoryData.sizes);
+        const sizeArray = inventoryData.sizes.map((s) => s.size);
 
-        if (prodData.products.length > 0) {
-          const rawCols = createColDef(prodData.products[0], "products");
+        if (inventoryData.inventory.length > 0) {
+          const rawCols = createColDef(
+            inventoryData.inventory[0],
+            "product_variants"
+          );
 
           const updatedCols = rawCols.map((col) => {
-            if (col.field === "category") {
+            if (col.field === "product") {
               return {
                 ...col,
                 cellEditorParams: {
-                  values: categoryArray,
+                  values: prodArray,
                 },
               };
             }
-            if (col.field === "status") {
+            if (col.field === "color") {
               return {
                 ...col,
                 cellEditorParams: {
-                  values: prodData.status,
+                  values: colorArray,
                 },
-                valueFormatter: (params) => formatColumnName(params.value),
+              };
+            }
+            if (col.field === "size") {
+              return {
+                ...col,
+                cellEditorParams: {
+                  values: sizeArray,
+                },
               };
             }
             return col;
           });
 
           setColumnDefs(updatedCols);
-          setRowData(prodData.products);
+          setRowData(inventoryData.inventory);
         }
       });
   }, []);
@@ -83,13 +101,8 @@ export default function Products() {
   );
   const closeModal = () => {
     setIsModalOpen(false);
-    setFormData({
-      product: "",
-      description: "",
-      category: "",
-      status: "",
-      updated_by: user.id,
-    });
+    setFormData({ product: "", color: "", size: "", quantity: "" });
+    console.log(formData);
   };
 
   const closeMessage = () => {
@@ -111,15 +124,16 @@ export default function Products() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("/api/auth/products", {
+    console.log(formData);
+    const response = await fetch("/api/auth/inventory", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({ ...formData, createdBy: user.id }),
     });
 
     if (response.ok) {
       const resData = await response.json();
-      refreshRowData(location.pathname, "products", setRowData);
+      refreshRowData(location.pathname, "inventory", setRowData);
       closeModal();
       openMessage(true, "success", resData.message);
     } else {
@@ -128,8 +142,8 @@ export default function Products() {
         true,
         "fail",
         resData.error.code === "23505"
-          ? `\'${formData.product}\' already exists.`
-          : `Failed to add \'${formData.product}\'.`
+          ? `\This product variation already exists.`
+          : `Failed to add this product variation.`
       );
       console.error("Error adding new product", resData);
     }
@@ -138,10 +152,10 @@ export default function Products() {
   const onRowValueChanged = useCallback(async (event) => {
     const putObj = {
       ...event.data,
-      updated_by: user.id,
+      updatedBy: user.id,
     };
 
-    const response = await fetch("/api/auth/products", {
+    const response = await fetch("/api/auth/inventory", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(putObj),
@@ -149,7 +163,7 @@ export default function Products() {
 
     if (response.ok) {
       const resData = await response.json();
-      refreshRowData(location.pathname, "products", setRowData);
+      refreshRowData(location.pathname, "inventory", setRowData);
       openMessage(true, "success", resData.message);
     } else {
       const resData = await response.json();
@@ -157,8 +171,8 @@ export default function Products() {
         true,
         "fail",
         resData.error.code === "23505"
-          ? `\'${putObj.product}\' already exists.`
-          : `Failed to update product to \'${putObj.product}\'.`
+          ? `\This product variation already exists.`
+          : `Failed to add this product variation.`
       );
       console.error("Failed to update product", resData);
     }
@@ -171,7 +185,7 @@ export default function Products() {
 
   const onDelete = async (rows) => {
     const ids = rows.map((row) => row.id);
-    const response = await fetch("/api/auth/products", {
+    const response = await fetch("/api/auth/inventory", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -182,7 +196,7 @@ export default function Products() {
     if (response.ok) {
       const resData = await response.json();
       console.log(rows);
-      refreshRowData(location.pathname, "product", setRowData);
+      refreshRowData(location.pathname, "inventory", setRowData);
       openMessage(true, "success", resData.message);
     } else {
       const resData = await response.json();
@@ -202,9 +216,9 @@ export default function Products() {
       )}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-orange-500">
-          Products Management
+          Inventory Management
         </h1>
-        <AddButton setIsModalOpen={setIsModalOpen} table={"Products"} />
+        <AddButton setIsModalOpen={setIsModalOpen} table={"Product Variant"} />
       </div>
 
       <div
@@ -232,7 +246,7 @@ export default function Products() {
           <div className="bg-gray-800 p-6 rounded-lg w-full max-w-lg shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-orange-400">
-                Add New Product
+                Add New Product Variant
               </h2>
               <button
                 onClick={closeModal}
@@ -245,45 +259,70 @@ export default function Products() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <input
-                  type="text"
-                  name="product"
-                  placeholder="Product Name"
-                  value={formData.product}
-                  onChange={handleChange}
-                  className="w-full p-2 rounded bg-gray-700 placeholder-gray-400"
-                  required
-                />
-              </div>
-
-              <div>
-                <textarea
-                  name="description"
-                  placeholder="Description (optional)"
-                  value={formData.description}
-                  onChange={handleChange}
-                  className="w-full p-2 rounded bg-gray-700 placeholder-gray-400 resize-none"
-                  rows="3"
-                />
-              </div>
-
-              <div>
                 <select
-                  name="category"
-                  value={formData.category}
+                  name="product"
+                  value={formData.product}
                   onChange={handleChange}
                   className="w-full p-2 rounded bg-gray-700"
                   required
                 >
                   <option value="" disabled>
-                    Select A Category
+                    Select A Product
                   </option>
-                  {catData.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.category}
+                  {prodData.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.product}
                     </option>
                   ))}
                 </select>
+              </div>
+              <div>
+                <select
+                  name="color"
+                  value={formData.color}
+                  onChange={handleChange}
+                  className="w-full p-2 rounded bg-gray-700"
+                  required
+                >
+                  <option value="" disabled>
+                    Select A Color
+                  </option>
+                  {colorData.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.color}
+                    </option>
+                  ))}
+                </select>
+              </div>{" "}
+              <div>
+                <select
+                  name="size"
+                  value={formData.size}
+                  onChange={handleChange}
+                  className="w-full p-2 rounded bg-gray-700"
+                  required
+                >
+                  <option value="" disabled>
+                    Select A Size
+                  </option>
+                  {sizeData.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.size}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <input
+                  type="number"
+                  name="quantity"
+                  placeholder="Quantity"
+                  value={formData.quantity}
+                  onChange={handleChange}
+                  className="w-full p-2 rounded bg-gray-700 placeholder-gray-400"
+                  min="0"
+                  required
+                />
               </div>
               <div className="flex justify-end gap-2 pt-4">
                 <button

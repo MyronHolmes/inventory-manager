@@ -75,17 +75,7 @@ const enumStageCol = {
     filter: "agTextColumnFilter",
     filterParams: { buttons: ["clear"] }
 }
-const statusCol = {
-    cellDataType: "text",
-    editable: true,
-    cellEditor: "agSelectCellEditor",
-    cellEditorParams: {
-        values: []
-    },
-    filter: "agTextColumnFilter",
-    filterParams: { buttons: ["clear"] }
-}
-const categoryCol = {
+const agSelectCol = {
     cellDataType: "text",
     editable: true,
     cellEditor: "agSelectCellEditor",
@@ -97,60 +87,62 @@ const categoryCol = {
 }
 export const tableMap = {
     "users": {
-        "id": {... defaultCol, editable: false},
+        "id":  { ...defaultCol, editable: false },
         "first_name": defaultCol,
         "last_name": defaultCol,
         "email": defaultCol,
         "role": defaultCol,
         "password": defaultCol,
-        "created_by": {... defaultCol, editable: false},
+        "created_by":  { ...defaultCol, editable: false },
         "created_at": dateTimeCol,
-        "updated_by": {... defaultCol, editable: false},
+        "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
     "colors": {
-        "id": {... defaultCol, editable: false},
+        "id":  { ...defaultCol, editable: false },
         "color": defaultCol,
-        "created_by": {... defaultCol, editable: false},
+        "created_by":  { ...defaultCol, editable: false },
         "created_at": dateTimeCol,
-        "updated_by": {... defaultCol, editable: false},
+        "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
     "categories": {
-        "id": {... defaultCol, editable: false},
+        "id":  { ...defaultCol, editable: false },
         "category": defaultCol,
-        "created_by": {... defaultCol, editable: false},
+        "created_by":  { ...defaultCol, editable: false },
         "created_at": dateTimeCol,
-        "updated_by": {... defaultCol, editable: false},
+        "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
     "sizes": {
-        "id": {... defaultCol, editable: false},
+        "id":  { ...defaultCol, editable: false },
         "size": defaultCol,
-        "created_by": {... defaultCol, editable: false},
+        "created_by":  { ...defaultCol, editable: false },
         "created_at": dateTimeCol,
-        "updated_by": {... defaultCol, editable: false},
+        "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
      "products": {
-        "id": {... defaultCol, editable: false},
+        "id":  { ...defaultCol, editable: false },
         "product": defaultCol,
         "description": defaultCol,
-        "category": categoryCol,
-        "quantity": numberCol,
-        "status": statusCol,
-        "created_by": {... defaultCol, editable: false},
+        "category": agSelectCol,
+        "quantity":  { ...numberCol, editable: false },
+        "status": agSelectCol,
+        "created_by":  { ...defaultCol, editable: false },
         "created_at": dateTimeCol,
-        "updated_by": {... defaultCol, editable: false},
+        "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
     "product_variants": {
-        "id": defaultCol,
-        "product_id": defaultCol,
-        "size_id": defaultCol,
-        "color_id": defaultCol,
+        "id":  { ...defaultCol, editable: false },
+        "product": agSelectCol,
+        "size": agSelectCol,
+        "color": agSelectCol,
         "quantity": numberCol,
+        "created_by":  { ...defaultCol, editable: false },
         "created_at": dateTimeCol,
+        "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     }
 }
