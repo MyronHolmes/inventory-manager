@@ -87,62 +87,62 @@ const agSelectCol = {
 }
 export const tableMap = {
     "users": {
-        "id": {... defaultCol, editable: false},
+        "id":  { ...defaultCol, editable: false },
         "first_name": defaultCol,
         "last_name": defaultCol,
         "email": defaultCol,
         "role": defaultCol,
         "password": defaultCol,
-        "created_by": {... defaultCol, editable: false},
+        "created_by":  { ...defaultCol, editable: false },
         "created_at": dateTimeCol,
-        "updated_by": {... defaultCol, editable: false},
+        "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
     "colors": {
-        "id": {... defaultCol, editable: false},
+        "id":  { ...defaultCol, editable: false },
         "color": defaultCol,
-        "created_by": {... defaultCol, editable: false},
+        "created_by":  { ...defaultCol, editable: false },
         "created_at": dateTimeCol,
-        "updated_by": {... defaultCol, editable: false},
+        "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
     "categories": {
-        "id": {... defaultCol, editable: false},
+        "id":  { ...defaultCol, editable: false },
         "category": defaultCol,
-        "created_by": {... defaultCol, editable: false},
+        "created_by":  { ...defaultCol, editable: false },
         "created_at": dateTimeCol,
-        "updated_by": {... defaultCol, editable: false},
+        "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
     "sizes": {
-        "id": {... defaultCol, editable: false},
+        "id":  { ...defaultCol, editable: false },
         "size": defaultCol,
-        "created_by": {... defaultCol, editable: false},
+        "created_by":  { ...defaultCol, editable: false },
         "created_at": dateTimeCol,
-        "updated_by": {... defaultCol, editable: false},
+        "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
      "products": {
-        "id": {... defaultCol, editable: false},
+        "id":  { ...defaultCol, editable: false },
         "product": defaultCol,
         "description": defaultCol,
         "category": agSelectCol,
-        "quantity": numberCol,
+        "quantity":  { ...numberCol, editable: false },
         "status": agSelectCol,
-        "created_by": {... defaultCol, editable: false},
+        "created_by":  { ...defaultCol, editable: false },
         "created_at": dateTimeCol,
-        "updated_by": {... defaultCol, editable: false},
+        "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
     "product_variants": {
-        "id": {... defaultCol, editable: false},
+        "id":  { ...defaultCol, editable: false },
         "product": agSelectCol,
         "size": agSelectCol,
         "color": agSelectCol,
         "quantity": numberCol,
-        "created_by": {... defaultCol, editable: false},
+        "created_by":  { ...defaultCol, editable: false },
         "created_at": dateTimeCol,
-        "updated_by": {... defaultCol, editable: false},
+        "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     }
 }

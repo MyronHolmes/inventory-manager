@@ -137,14 +137,14 @@ export default function Inventory() {
       closeModal();
       openMessage(true, "success", resData.message);
     } else {
+      console.log(prodData)
       const resData = await response.json();
-      const product = prodData.find((p) => p.id = formData.product ).product;
       openMessage(
         true,
         "fail",
         resData.error.code === "23505"
-          ? `\This '${product}\' variation already exists.`
-          : `Failed to add this \'${product}\' variation.`
+          ? `\This product variation already exists.`
+          : `Failed to add this product variation.`
       );
       console.error("Error adding new product", resData);
     }

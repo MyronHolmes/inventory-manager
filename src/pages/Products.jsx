@@ -87,7 +87,6 @@ export default function Products() {
       product: "",
       description: "",
       category: "",
-      quantity: "",
       status: "",
       updated_by: user.id,
     });
@@ -286,20 +285,6 @@ export default function Products() {
                   ))}
                 </select>
               </div>
-
-              <div>
-                <input
-                  type="number"
-                  name="quantity"
-                  placeholder="Quantity"
-                  value={formData.quantity}
-                  onChange={handleChange}
-                  className="w-full p-2 rounded bg-gray-700 placeholder-gray-400"
-                  min="0"
-                  required
-                />
-              </div>
-
               <div className="flex justify-end gap-2 pt-4">
                 <button
                   type="button"
