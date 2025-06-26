@@ -589,12 +589,11 @@ router.get("/products", async (req, res) => {
 
 router.post("/products", async (req, res) => {
   try {
-    const { product, description, category, quantity, updated_by } = req.body;
+    const { product, description, category, updated_by } = req.body;
     const postObj = {
       product: capitalizeWords(product),
       category_id: category,
       description,
-      quantity,
       updated_by,
     };
 
@@ -618,7 +617,7 @@ router.post("/products", async (req, res) => {
 
 router.put("/products", async (req, res) => {
   try {
-    const { id, product, description, category, quantity, status, updated_by } =
+    const { id, product, description, category, status, updated_by } =
       req.body;
 
     const catData = await makeRequest(
@@ -635,7 +634,6 @@ router.put("/products", async (req, res) => {
       product: capitalizeWords(product),
       category_id: catData[0].id,
       description,
-      quantity: quantity,
       status: status,
       updated_by: updated_by,
     };
