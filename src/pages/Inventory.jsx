@@ -137,7 +137,6 @@ export default function Inventory() {
       closeModal();
       openMessage(true, "success", resData.message);
     } else {
-      console.log(prodData)
       const resData = await response.json();
       openMessage(
         true,
@@ -172,8 +171,8 @@ export default function Inventory() {
         true,
         "fail",
         resData.error.code === "23505"
-          ? `\'${putObj.product}\' already exists.`
-          : `Failed to update product to \'${putObj.product}\'.`
+          ? `\This product variation already exists.`
+          : `Failed to add this product variation.`
       );
       console.error("Failed to update product", resData);
     }
