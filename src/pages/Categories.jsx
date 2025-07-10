@@ -39,6 +39,7 @@ export default function Categories() {
           setRowData(data.categories);
         }
       });
+    setIsLoading(false);
   }, []);
 
   const defaultColDef = useMemo(
