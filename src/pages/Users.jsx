@@ -4,6 +4,8 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { myTheme } from "../utils/tableConfig";
 import { createColDef } from "../utils/colDef";
 import { getCookie } from "../utils/auth";
+import Button from "../components/Button";
+import { Trash2 } from "lucide-react";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -77,12 +79,7 @@ export default function Users() {
     <div className="ag-theme-alpine p-4 space-y-6 min-h-screen">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-orange-500">User Management</h1>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
-        >
-          + Add User
-        </button>
+        <Button context="+ Add User" bgColor="orange" textColor="white" onClick={setIsModalOpen}></Button>
       </div>
 
       <div

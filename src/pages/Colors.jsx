@@ -5,10 +5,10 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { myTheme } from "../utils/tableConfig";
 import { createColDef } from "../utils/colDef";
 import { getCookie } from "../utils/auth";
-import DeleteButton from "../components/DeleteButton";
+import Button from "../components/Button";
 import { refreshRowData } from "../utils/fetchHelpers";
-import AddButton from "../components/AddButton";
 import Notification from "../components/Notification";
+import { Trash2 } from "lucide-react";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -172,7 +172,7 @@ export default function Colors() {
       )}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-orange-500">Color Management</h1>
-        <AddButton setIsModalOpen={setIsModalOpen} table={"Color"}/>
+        <Button context="+ Add Color" bgColor="orange" textColor="white" onClick={setIsModalOpen}></Button>
       </div>
 
       <div
@@ -191,7 +191,7 @@ export default function Colors() {
         />
       </div>
       <div className="flex flex-row-reverse m-0 p-0">
-        <DeleteButton selectedRows={selectedRows} onDelete={onDelete} />
+        <Button context={<Trash2 />} bgColor="red" textColor="white" onClick={onDelete} selectedRows={selectedRows} ></Button>
       </div>
 
       {/* Modal */}

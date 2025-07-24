@@ -5,11 +5,11 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { myTheme } from "../utils/tableConfig";
 import { createColDef } from "../utils/colDef";
 import { getCookie } from "../utils/auth";
-import DeleteButton from "../components/DeleteButton";
 import { refreshRowData } from "../utils/fetchHelpers";
-import AddButton from "../components/AddButton";
+import Button from "../components/Button";
 import Notification from "../components/Notification";
 import LoadingScreen from "../components/LoadScreen";
+import { Trash2 } from "lucide-react";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -177,7 +177,7 @@ export default function Categories() {
         <h1 className="text-2xl font-bold text-orange-500">
           Category Management
         </h1>
-        <AddButton setIsModalOpen={setIsModalOpen} table={"Category"} />
+        <Button context="+ Add Category" bgColor="orange" textColor="white" onClick={setIsModalOpen}></Button>
       </div>
 
       <div
@@ -200,7 +200,7 @@ export default function Categories() {
         )}
       </div>
       <div className="flex flex-row-reverse m-0 p-0">
-        <DeleteButton selectedRows={selectedRows} onDelete={onDelete} />
+        <Button context={<Trash2 />} bgColor="red" textColor="white" onClick={onDelete} selectedRows={selectedRows} ></Button>
       </div>
 
       {/* Modal */}
