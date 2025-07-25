@@ -9,7 +9,7 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import express, { response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { capitalizeWords } from "../../src/utils/format.js";
+import { capitalizeWords, parseDescription } from "../../src/utils/format.js";
 import { makeRequest } from "../../src/utils/fetchHelpers.js";
 
 const router = express.Router();
@@ -566,17 +566,21 @@ router.get("/products", async (req, res) => {
   try {
     const swagger = await fetch(process.env.PGRST_DB_URL);
     const api = await swagger.json();
+    const tableDefinitions = api.definitions?.products;
     const status = api.definitions?.products?.properties?.status?.enum || [];
 
     const [categories, products] = await Promise.all([
       makeRequest(`${process.env.PGRST_DB_URL}categories?select=id,category`),
-      makeRequest(`${process.env.PGRST_DB_URL}products_view`),
+      makeRequest(`${process.env.PGRST_DB_URL}products`),
     ]);
+
+    const definitions = parseDescription(tableDefinitions.properties);
 
     res.status(200).json({
       products,
       categories,
       status,
+      definitions
     });
   } catch (err) {
     console.error("Error fetching products: ", err);

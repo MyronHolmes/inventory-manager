@@ -62,6 +62,8 @@ export default function Products() {
 
           setColumnDefs(updatedCols);
           setRowData(prodData.products);
+      console.log(prodData)
+
         }
       });
   }, []);
@@ -225,7 +227,7 @@ export default function Products() {
       <div className="flex flex-row-reverse m-0 p-0">
         <Button context={<Trash2 />} bgColor="red" textColor="white" onClick={onDelete} selectedRows={selectedRows} ></Button>
       </div>
-
+      
       {/* Add Product Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-sm">
