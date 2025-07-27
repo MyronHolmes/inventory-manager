@@ -22,20 +22,16 @@ export function capitalizeWords(str) {
 export const parseDescription = (properties) => {
     const definitions = Object.entries(properties)
     .filter(([columnName, columnDef]) => {
-      // Only include if description exists and doesn't start with "Note:"
       return columnDef.description && !columnDef.description.startsWith('Note:');
     })
     .reduce((acc, [columnName, columnDef]) => {      
       try {
-        // Parse the JSON description
         columnDef.description = JSON.parse(columnDef.description);
       } catch (error) {
         console.log(`Failed to parse JSON for ${columnName}:`, error.message);
-        // Skip columns that don't have valid JSON descriptions
         return acc;
       }
       
-      // Merge the parsed data directly into the column definition
       acc[columnName] = {
         ...columnDef,
       };

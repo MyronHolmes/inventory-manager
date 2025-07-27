@@ -566,20 +566,22 @@ router.get("/products", async (req, res) => {
   try {
     const swagger = await fetch(process.env.PGRST_DB_URL);
     const api = await swagger.json();
-    const tableDefinitions = api.definitions?.products;
-    const status = api.definitions?.products?.properties?.status?.enum || [];
+    const tableDefinitions = api.definitions?.products_view;
 
-    const [categories, products] = await Promise.all([
+    const [categoryOptions, products] = await Promise.all([
       makeRequest(`${process.env.PGRST_DB_URL}categories?select=id,category`),
-      makeRequest(`${process.env.PGRST_DB_URL}products`),
+      makeRequest(`${process.env.PGRST_DB_URL}products_view`),
     ]);
 
-    const definitions = parseDescription(tableDefinitions.properties);
-
+    let definitions = parseDescription(tableDefinitions.properties);
+    definitions.category.description = {
+      ...definitions.category.description,
+      categoryOptions,
+    };
+    console.log(definitions, categoryOptions);
     res.status(200).json({
+      table: "Product",
       products,
-      categories,
-      status,
       definitions
     });
   } catch (err) {
@@ -593,12 +595,15 @@ router.get("/products", async (req, res) => {
 
 router.post("/products", async (req, res) => {
   try {
-    const { product, description, category, updated_by } = req.body;
+    const { product, description, category, quantity, status, updated_by } =
+      req.body;
     const postObj = {
       product: capitalizeWords(product),
-      category_id: category,
       description,
-      updated_by,
+      category_id: category,
+      quantity,
+      status,
+      created_by: updated_by,
     };
 
     const data = await makeRequest(`${process.env.PGRST_DB_URL}products`, {
@@ -621,8 +626,7 @@ router.post("/products", async (req, res) => {
 
 router.put("/products", async (req, res) => {
   try {
-    const { id, product, description, category, status, updated_by } =
-      req.body;
+    const { id, product, description, category, status, updated_by } = req.body;
 
     const catData = await makeRequest(
       `${process.env.PGRST_DB_URL}categories?select=id,category&category=eq.${category}`
@@ -721,9 +725,9 @@ router.post("/inventory", async (req, res) => {
       color_id: color,
       size_id: size,
       quantity,
-      created_by: createdBy
-    }
-    console.log(postObj)
+      created_by: createdBy,
+    };
+    console.log(postObj);
     const data = await makeRequest(
       `${process.env.PGRST_DB_URL}product_variants`,
       {
@@ -731,7 +735,7 @@ router.post("/inventory", async (req, res) => {
         body: JSON.stringify(postObj),
       }
     );
-    console.log(data)
+    console.log(data);
 
     res.status(201).json({
       message: `New product variant successfully created.`,

@@ -8,8 +8,10 @@ import { getCookie } from "../utils/auth";
 import { refreshRowData } from "../utils/fetchHelpers";
 import Button from "../components/Button";
 import Notification from "../components/Notification";
-import { formatColumnName } from "../utils/format";
+import { capitalizeWords, formatColumnName } from "../utils/format";
 import { Trash2 } from "lucide-react";
+import { Modal } from "../components/Modal";
+import { Form } from "../components/Form";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -18,7 +20,8 @@ export default function Products() {
   const location = useLocation();
   const [rowData, setRowData] = useState([]);
   const [columnDefs, setColumnDefs] = useState([]);
-  const [catData, setCatData] = useState([]);
+  const [formDefs, setFormDefs] = useState([]);
+  const [title, setTitle] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [message, setMessage] = useState([]);
   const [messageType, setMessageType] = useState([]);
@@ -26,16 +29,23 @@ export default function Products() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     product: "",
-    created_by: user.id,
+    description: "",
+    category: "",
+    status: "",
+    quanity: 0,
+    updated_by: user.id,
   });
 
   useEffect(() => {
     fetch("/api/auth/products")
       .then((res) => res.json())
       .then((prodData) => {
-        setCatData(prodData.categories);
-        const categoryArray = prodData.categories.map((cat) => cat.category);
-
+        setFormDefs(prodData.definitions);
+        setTitle(prodData.table);
+        const categoryArray =
+          prodData.definitions.category.description.categoryOptions.map(
+            (cat) => cat.category
+          );
         if (prodData.products.length > 0) {
           const rawCols = createColDef(prodData.products[0], "products");
 
@@ -52,7 +62,7 @@ export default function Products() {
               return {
                 ...col,
                 cellEditorParams: {
-                  values: prodData.status,
+                  values: prodData.definitions.status.enum,
                 },
                 valueFormatter: (params) => formatColumnName(params.value),
               };
@@ -62,8 +72,6 @@ export default function Products() {
 
           setColumnDefs(updatedCols);
           setRowData(prodData.products);
-      console.log(prodData)
-
         }
       });
   }, []);
@@ -90,6 +98,7 @@ export default function Products() {
       description: "",
       category: "",
       status: "",
+      quanity: 0,
       updated_by: user.id,
     });
   };
@@ -204,9 +213,14 @@ export default function Products() {
       )}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-orange-500">
-          Product Management
+          {title} Management
         </h1>
-        <Button context="+ Add Product" bgColor="orange" textColor="white" onClick={setIsModalOpen}></Button>
+        <Button
+          context={"+ Add " + title}
+          bgColor="orange"
+          textColor="white"
+          onClick={setIsModalOpen}
+        ></Button>
       </div>
 
       <div
@@ -225,86 +239,27 @@ export default function Products() {
         />
       </div>
       <div className="flex flex-row-reverse m-0 p-0">
-        <Button context={<Trash2 />} bgColor="red" textColor="white" onClick={onDelete} selectedRows={selectedRows} ></Button>
+        <Button
+          context={<Trash2 />}
+          bgColor="red"
+          textColor="white"
+          onClick={onDelete}
+          selectedRows={selectedRows}
+        ></Button>
       </div>
-      
+
       {/* Add Product Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-sm">
-          <div className="bg-gray-800 p-6 rounded-lg w-full max-w-lg shadow-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-orange-400">
-                Add New Product
-              </h2>
-              <button
-                onClick={closeModal}
-                className="text-white hover:text-red-400 text-2xl font-bold"
-                aria-label="Close modal"
-              >
-                &times;
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <input
-                  type="text"
-                  name="product"
-                  placeholder="Product Name"
-                  value={formData.product}
-                  onChange={handleChange}
-                  className="w-full p-2 rounded bg-gray-700 placeholder-gray-400"
-                  required
-                />
-              </div>
-
-              <div>
-                <textarea
-                  name="description"
-                  placeholder="Description (optional)"
-                  value={formData.description}
-                  onChange={handleChange}
-                  className="w-full p-2 rounded bg-gray-700 placeholder-gray-400 resize-none"
-                  rows="3"
-                />
-              </div>
-
-              <div>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="w-full p-2 rounded bg-gray-700"
-                  required
-                >
-                  <option value="" disabled>
-                    Select A Category
-                  </option>
-                  {catData.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.category}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex justify-end gap-2 pt-4">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded transition-colors"
-                >
-                  Add Product
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <Modal title={"Add New " + title} onClose={closeModal}>
+          <Form
+            title={title}
+            formData={formData}
+            definitions={formDefs}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+            onClose={closeModal}
+          ></Form>
+        </Modal>
       )}
     </div>
   );
