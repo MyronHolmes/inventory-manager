@@ -50,7 +50,7 @@ export const Form = ({
             className="w-full p-2 rounded bg-gray-700"
             required={fieldProps.required}
           >
-            <option value="" disabled>
+            <option selected value="" disabled>
               Select A {capitalizeWords(fieldName)}
             </option>
             {fieldDef.description[`${fieldName}Options`] ? (

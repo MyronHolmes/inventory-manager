@@ -564,11 +564,11 @@ router.delete("/sizes", async (req, res) => {
 // Products Table
 router.get("/products", async (req, res) => {
   try {
-    const swagger = await fetch(process.env.PGRST_DB_URL);
-    const api = await swagger.json();
+    const swaggerDocs = await fetch(process.env.PGRST_DB_URL);
+    const api = await swaggerDocs.json();
     const tableDefinitions = api.definitions?.products_view;
 
-    const [categoryOptions, products] = await Promise.all([
+    const [categoryOptions, content] = await Promise.all([
       makeRequest(`${process.env.PGRST_DB_URL}categories?select=id,category`),
       makeRequest(`${process.env.PGRST_DB_URL}products_view`),
     ]);
@@ -578,10 +578,10 @@ router.get("/products", async (req, res) => {
       ...definitions.category.description,
       categoryOptions,
     };
-    console.log(definitions, categoryOptions);
+
     res.status(200).json({
       table: "Product",
-      products,
+      content,
       definitions
     });
   } catch (err) {

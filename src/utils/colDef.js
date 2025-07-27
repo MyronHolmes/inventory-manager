@@ -86,7 +86,7 @@ const agSelectCol = {
     filterParams: { buttons: ["clear"] }
 }
 export const tableMap = {
-    "users": {
+    "/users": {
         "id":  { ...defaultCol, editable: false },
         "first_name": defaultCol,
         "last_name": defaultCol,
@@ -98,7 +98,7 @@ export const tableMap = {
         "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
-    "colors": {
+    "/colors": {
         "id":  { ...defaultCol, editable: false },
         "color": defaultCol,
         "created_by":  { ...defaultCol, editable: false },
@@ -106,7 +106,7 @@ export const tableMap = {
         "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
-    "categories": {
+    "/categories": {
         "id":  { ...defaultCol, editable: false },
         "category": defaultCol,
         "created_by":  { ...defaultCol, editable: false },
@@ -114,7 +114,7 @@ export const tableMap = {
         "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
-    "sizes": {
+    "/sizes": {
         "id":  { ...defaultCol, editable: false },
         "size": defaultCol,
         "created_by":  { ...defaultCol, editable: false },
@@ -122,7 +122,7 @@ export const tableMap = {
         "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
-     "products": {
+     "/products": {
         "id":  { ...defaultCol, editable: false },
         "product": defaultCol,
         "description": defaultCol,
@@ -134,7 +134,8 @@ export const tableMap = {
         "updated_by":  { ...defaultCol, editable: false },
         "updated_at": dateTimeCol
     },
-    "product_variants": {
+    ///product_variants table
+    "/inventory": {
         "id":  { ...defaultCol, editable: false },
         "product": agSelectCol,
         "size": agSelectCol,

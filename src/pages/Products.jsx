@@ -23,31 +23,32 @@ export default function Products() {
   const [formDefs, setFormDefs] = useState([]);
   const [title, setTitle] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState([]);
   const [messageType, setMessageType] = useState([]);
   const [showMessage, setShowMessage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    product: "",
-    description: "",
-    category: "",
-    status: "",
-    quanity: 0,
     updated_by: user.id,
   });
 
   useEffect(() => {
-    fetch("/api/auth/products")
-      .then((res) => res.json())
-      .then((prodData) => {
-        setFormDefs(prodData.definitions);
-        setTitle(prodData.table);
+    const fetchTableData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/auth${location.pathname}`);
+        if (!response.ok) throw new Error("Failed to fetch table data");
+
+        const tableData = await response.json();
+        setFormDefs(tableData.definitions);
+        setTitle(tableData.table);
         const categoryArray =
-          prodData.definitions.category.description.categoryOptions.map(
+          tableData.definitions.category?.description?.categoryOptions?.map(
             (cat) => cat.category
-          );
-        if (prodData.products.length > 0) {
-          const rawCols = createColDef(prodData.products[0], "products");
+          ) || [];
+
+        if (tableData.content.length > 0) {
+          const rawCols = createColDef(tableData.content[0], location.pathname);
 
           const updatedCols = rawCols.map((col) => {
             if (col.field === "category") {
@@ -62,7 +63,16 @@ export default function Products() {
               return {
                 ...col,
                 cellEditorParams: {
-                  values: prodData.definitions.status.enum,
+                  values: tableData.definitions.status.enum,
+                },
+                valueFormatter: (params) => formatColumnName(params.value),
+              };
+            }
+            if (col.field === "role") {
+              return {
+                ...col,
+                cellEditorParams: {
+                  values: tableData.definitions.role.enum,
                 },
                 valueFormatter: (params) => formatColumnName(params.value),
               };
@@ -71,10 +81,17 @@ export default function Products() {
           });
 
           setColumnDefs(updatedCols);
-          setRowData(prodData.products);
+          setRowData(tableData.content);
+          console.log(tableData);
         }
-      });
-  }, []);
+      } catch (error) {
+
+      } finally {
+          setLoading(false);
+      }
+    };
+    fetchTableData();
+  }, [location.pathname]);
 
   const defaultColDef = useMemo(
     () => ({
@@ -248,7 +265,7 @@ export default function Products() {
         ></Button>
       </div>
 
-      {/* Add Product Modal */}
+      {/* Add Form Modal */}
       {isModalOpen && (
         <Modal title={"Add New " + title} onClose={closeModal}>
           <Form
