@@ -24,7 +24,6 @@ function AppWrapper() {
   const hideNavOnPaths = ["/login"];
   const authenticated = JSON.parse(getCookie("user"));
   const authorized = authenticated?.role;
-  console.log(authorized);
 
   return (
     <>

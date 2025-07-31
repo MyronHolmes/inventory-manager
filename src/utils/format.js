@@ -28,7 +28,7 @@ export const parseDescription = (properties) => {
       try {
         columnDef.description = JSON.parse(columnDef.description);
       } catch (error) {
-        console.log(`Failed to parse JSON for ${columnName}:`, error.message);
+        console.error(`Failed to parse JSON for ${columnName}:`, error.message);
         return acc;
       }
       

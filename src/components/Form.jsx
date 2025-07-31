@@ -9,7 +9,6 @@ export const Form = ({
   onClose,
 }) => {
   const renderField = (fieldName, fieldDef) => {
-    console.log(definitions);
     const fieldProps = {
       type: fieldDef.description.type,
       placeholder: fieldDef.description.placeholder,

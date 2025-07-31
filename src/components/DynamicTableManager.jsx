@@ -11,6 +11,7 @@ import { useTableManager } from "../hooks/useTableManager";
 import { useNotification } from "../hooks/useNotification";
 import { useModal } from "../hooks/useModal";
 import LoadingScreen from "../components/LoadingScreen";
+import { capitalizeWords } from "../utils/format";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -96,7 +97,12 @@ function DynamicTableContent({ defaultFormData = {} }) {
   );
 
   if (tableLoading) {
-    return <LoadingScreen message={`Loading ${title.toLowerCase()}...`} />;
+    return (
+      <LoadingScreen
+        message={`Loading The ${capitalizeWords(location.pathname.slice(1))}...`}
+        size={"large"}
+      />
+    );
   }
   // Error state
   if (tableError) {
@@ -172,6 +178,7 @@ function DynamicTableContent({ defaultFormData = {} }) {
             definitions={formDefs}
             onChange={handleInputChange}
             onSubmit={handleSubmit}
+            loading={operationLoading}
             onClose={closeModal}
           ></Form>
         </Modal>

@@ -33,7 +33,6 @@ export default function Login() {
       }
 
       const data = await response.json();
-      console.log("Login success:", data);
       setLoading(false)
       // Example: redirect or store user info
       window.location.href = "/";

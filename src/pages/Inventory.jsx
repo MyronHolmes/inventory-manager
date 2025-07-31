@@ -36,7 +36,6 @@ export default function Inventory() {
     fetch("/api/auth/inventory")
       .then((res) => res.json())
       .then((inventoryData) => {
-        console.log(inventoryData);
         setProdData(inventoryData.products);
         const prodArray = inventoryData.products.map((p) => p.product);
         setColorData(inventoryData.colors);
@@ -102,7 +101,6 @@ export default function Inventory() {
   const closeModal = () => {
     setIsModalOpen(false);
     setFormData({ product: "", color: "", size: "", quantity: "" });
-    console.log(formData);
   };
 
   const closeMessage = () => {
@@ -124,7 +122,6 @@ export default function Inventory() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     const response = await fetch("/api/auth/inventory", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -195,7 +192,6 @@ export default function Inventory() {
 
     if (response.ok) {
       const resData = await response.json();
-      console.log(rows);
       refreshRowData(location.pathname, "inventory", setRowData);
       openMessage(true, "success", resData.message);
     } else {

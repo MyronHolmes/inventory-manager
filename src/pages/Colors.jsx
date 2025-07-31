@@ -106,7 +106,6 @@ export default function Colors() {
   };
 
   const onRowValueChanged = useCallback(async (event) => {
-    console.log("Data after change is", event.data, event);
     const putObj = {
       ...event.data,
       updated_by: user.id,

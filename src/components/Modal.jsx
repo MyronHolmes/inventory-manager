@@ -1,4 +1,4 @@
-export const Modal = ({ title, children, onClose }) => {
+export const Modal = ({ title, children, onClose, loading  }) => {
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-sm">
@@ -13,7 +13,13 @@ export const Modal = ({ title, children, onClose }) => {
               &times;
             </button>
           </div>
-          <div>{children}</div>
+          <div>
+              {loading ?
+                <LoadingScreen message={`Loading...`}/>
+                :
+                children
+              }
+            </div>
         </div>
       </div>
     </>

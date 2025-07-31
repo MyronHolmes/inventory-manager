@@ -33,7 +33,6 @@ export const useTableManager = () => {
 
         setColumnDefs(enhancedCols);
         setRowData(tableData.content);
-        console.log(tableData, enhancedCols);
       }
     } catch (error) {
       console.error(error);
@@ -49,7 +48,6 @@ export const useTableManager = () => {
       const enhanced = { ...col };
       if (fieldDef.description.field === "select") {
         if (fieldDef.enum) {
-          console.log(fieldDef.enum);
           enhanced.cellEditorParams = { values: fieldDef.enum };
         }
         enhanced.valueFormatter = (params) => {
@@ -105,7 +103,6 @@ export const useTableManager = () => {
     async (recordData, onMessage) => {
       setOperationLoading(true);
       try {
-        console.log(recordData);
         const response = await fetch(`/api/auth${location.pathname}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -151,7 +148,6 @@ export const useTableManager = () => {
         });
 
         const resData = await response.json();
-        console.log(resData);
         if (response.ok) {
           await fetchTableData();
           onMessage("success", resData.message);

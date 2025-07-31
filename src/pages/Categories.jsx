@@ -185,7 +185,7 @@ export default function Categories() {
         style={{ height: 600, width: "100%" }}
       >
         {isLoading ? (
-          <LoadingScreen overlay={false} />
+          <LoadingScreen />
         ) : (
           <AgGridReact
             rowData={rowData}
