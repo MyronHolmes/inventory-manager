@@ -576,13 +576,13 @@ router.get("/products", async (req, res) => {
     let definitions = parseDescription(tableDefinitions.properties);
     definitions.category.description = {
       ...definitions.category.description,
-      categoryOptions,
+      options: categoryOptions,
     };
 
     res.status(200).json({
       table: "Product",
       content,
-      definitions
+      definitions,
     });
   } catch (err) {
     console.error("Error fetching products: ", err);

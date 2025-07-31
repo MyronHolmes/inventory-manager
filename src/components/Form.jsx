@@ -50,20 +50,20 @@ export const Form = ({
             className="w-full p-2 rounded bg-gray-700"
             required={fieldProps.required}
           >
-            <option selected value="" disabled>
+            <option value="" disabled>
               Select A {capitalizeWords(fieldName)}
             </option>
-            {fieldDef.description[`${fieldName}Options`] ? (
+            {fieldDef.description.options ? (
               <>
-                {fieldDef.description[`${fieldName}Options`].map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.category}
+                {fieldDef.description.options?.map((opt) => (
+                  <option key={opt.id} value={opt.id}>
+                    {opt[fieldName]}
                   </option>
                 ))}
               </>
             ) : (
               <>
-                {fieldDef.enum.map((e) => (
+                {fieldDef?.enum?.map((e) => (
                   <option key={e} value={e}>
                     {formatColumnName(e)}
                   </option>

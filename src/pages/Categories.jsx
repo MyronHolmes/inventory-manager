@@ -8,7 +8,7 @@ import { getCookie } from "../utils/auth";
 import { refreshRowData } from "../utils/fetchHelpers";
 import Button from "../components/Button";
 import Notification from "../components/Notification";
-import LoadingScreen from "../components/LoadScreen";
+import LoadingScreen from "../components/LoadingScreen";
 import { Trash2 } from "lucide-react";
 
 ModuleRegistry.registerModules([AllCommunityModule]);

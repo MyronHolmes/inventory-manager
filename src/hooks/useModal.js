@@ -1,0 +1,32 @@
+import { useState } from "react";
+import { getCookie } from "../utils/auth";
+
+export const useModal = (initialFormData = {}) => {
+  const user = JSON.parse(getCookie("user"));
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    ...initialFormData,
+  });
+
+  const openModal = () => setIsModalOpen(true);
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setFormData({
+      ...initialFormData,
+    });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  return {
+    isModalOpen,
+    formData,
+    openModal,
+    closeModal,
+    handleInputChange,
+  };
+};
