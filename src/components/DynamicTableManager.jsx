@@ -123,7 +123,7 @@ function DynamicTableContent({ defaultFormData = {} }) {
         <Notification
           type={messageType}
           message={message}
-          closeMessage={hideNotification}
+          onClose={hideNotification}
         />
       )}
       <div className="flex justify-between items-center">
@@ -158,7 +158,7 @@ function DynamicTableContent({ defaultFormData = {} }) {
           context={<Trash2 />}
           bgColor="red"
           textColor="white"
-          onClick={deleteRecords}
+          onClick={handleDelete}
           selectedRows={selectedRows}
         ></Button>
       </div>

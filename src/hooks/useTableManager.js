@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { getCookie } from "../utils/auth";
 import { createColDef } from "../utils/colDef";
+import { formatColumnName } from "../utils/format";
 
 export const useTableManager = () => {
   const location = useLocation();
@@ -51,12 +52,15 @@ export const useTableManager = () => {
           console.log(fieldDef.enum);
           enhanced.cellEditorParams = { values: fieldDef.enum };
         }
+        enhanced.valueFormatter = (params) => {
+          const value = params.value;
+          return formatColumnName(value);
+        };
         if (
           Array.isArray(fieldDef.description?.options) &&
           fieldDef.description.options.length > 0 &&
           typeof fieldDef.description.options[0] === "object"
         ) {
-          console.log(fieldDef.description.options, fieldDef);
           enhanced.cellEditorParams = {
             values: fieldDef.description?.options?.map((opt) => opt[col.field]),
           };
@@ -88,7 +92,7 @@ export const useTableManager = () => {
           return { success: false, error: errorMessage };
         }
       } catch (error) {
-        onMessage("fail", "Network error occurred");
+        console.error(error);
         return { success: false, error: error.message };
       } finally {
         setOperationLoading(false);
@@ -101,6 +105,7 @@ export const useTableManager = () => {
     async (recordData, onMessage) => {
       setOperationLoading(true);
       try {
+        console.log(recordData);
         const response = await fetch(`/api/auth${location.pathname}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -110,7 +115,7 @@ export const useTableManager = () => {
         const resData = await response.json();
 
         if (response.ok) {
-          await refreshRowData(location.pathname, title, setRowData);
+          await fetchTableData();
           onMessage("success", resData.message);
           return { success: true };
         } else {
@@ -124,7 +129,7 @@ export const useTableManager = () => {
           return { success: false, error: errorMessage };
         }
       } catch (error) {
-        onMessage("fail", "Network error occurred");
+        console.error(error);
         return { success: false, error: error.message };
       } finally {
         setOperationLoading(false);
@@ -146,9 +151,9 @@ export const useTableManager = () => {
         });
 
         const resData = await response.json();
-
+        console.log(resData);
         if (response.ok) {
-          await refreshRowData(location.pathname, title, setRowData);
+          await fetchTableData();
           onMessage("success", resData.message);
           return { success: true };
         } else {
@@ -156,6 +161,7 @@ export const useTableManager = () => {
           return { success: false, error: "Delete failed" };
         }
       } catch (error) {
+        console.error(error);
         onMessage("fail", "Network error occurred");
         return { success: false, error: error.message };
       } finally {

@@ -1,6 +1,6 @@
 import { formatColumnName } from "./format";
 
-export const columnsToHide = ["password"];
+export const columnsToHide = ["password", "id"];
 
 const defaultCol = {
     cellDataType: "text",
@@ -127,7 +127,7 @@ export const tableMap = {
         "product": defaultCol,
         "description": defaultCol,
         "category": agSelectCol,
-        "quantity":  { ...numberCol, editable: false },
+        "quantity":  { ...numberCol, editable: true },
         "status": agSelectCol,
         "created_by":  { ...defaultCol, editable: false },
         "created_at": dateTimeCol,

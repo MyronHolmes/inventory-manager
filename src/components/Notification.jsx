@@ -1,4 +1,4 @@
-function Notification({ message, type, hideNotification }) {
+function Notification({ message, type, onClose }) {
   return (
     <div
       className={`w-1/3 border-3 rounded-lg bg-gray-900 p-3 absolute top-2 right-2 z-100 ${
@@ -7,7 +7,7 @@ function Notification({ message, type, hideNotification }) {
     >
       <div className="flex justify-between">
         <h3>{message}</h3>
-        <button className="cursor-pointer" onClick={hideNotification}>
+        <button className="cursor-pointer" onClick={onClose}>
           &times;
         </button>
       </div>
