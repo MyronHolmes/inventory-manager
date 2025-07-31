@@ -5,10 +5,10 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { myTheme } from "../utils/tableConfig";
 import { createColDef } from "../utils/colDef";
 import { getCookie } from "../utils/auth";
-import DeleteButton from "../components/DeleteButton";
+import Button from "../components/Button";
 import { refreshRowData } from "../utils/fetchHelpers";
-import AddButton from "../components/AddButton";
 import Notification from "../components/Notification";
+import { Trash2 } from "lucide-react";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -36,7 +36,6 @@ export default function Inventory() {
     fetch("/api/auth/inventory")
       .then((res) => res.json())
       .then((inventoryData) => {
-        console.log(inventoryData);
         setProdData(inventoryData.products);
         const prodArray = inventoryData.products.map((p) => p.product);
         setColorData(inventoryData.colors);
@@ -102,7 +101,6 @@ export default function Inventory() {
   const closeModal = () => {
     setIsModalOpen(false);
     setFormData({ product: "", color: "", size: "", quantity: "" });
-    console.log(formData);
   };
 
   const closeMessage = () => {
@@ -124,7 +122,6 @@ export default function Inventory() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     const response = await fetch("/api/auth/inventory", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -195,7 +192,6 @@ export default function Inventory() {
 
     if (response.ok) {
       const resData = await response.json();
-      console.log(rows);
       refreshRowData(location.pathname, "inventory", setRowData);
       openMessage(true, "success", resData.message);
     } else {
@@ -218,7 +214,7 @@ export default function Inventory() {
         <h1 className="text-2xl font-bold text-orange-500">
           Inventory Management
         </h1>
-        <AddButton setIsModalOpen={setIsModalOpen} table={"Product Variant"} />
+        <Button context="+ Add Product Variant" bgColor="orange" textColor="white" onClick={setIsModalOpen}></Button>
       </div>
 
       <div
@@ -237,7 +233,7 @@ export default function Inventory() {
         />
       </div>
       <div className="flex flex-row-reverse m-0 p-0">
-        <DeleteButton selectedRows={selectedRows} onDelete={onDelete} />
+        <Button context={<Trash2 />} bgColor="red" textColor="white" onClick={onDelete} selectedRows={selectedRows} ></Button>
       </div>
 
       {/* Add Product Modal */}

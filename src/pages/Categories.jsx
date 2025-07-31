@@ -5,10 +5,11 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { myTheme } from "../utils/tableConfig";
 import { createColDef } from "../utils/colDef";
 import { getCookie } from "../utils/auth";
-import DeleteButton from "../components/DeleteButton";
 import { refreshRowData } from "../utils/fetchHelpers";
-import AddButton from "../components/AddButton";
+import Button from "../components/Button";
 import Notification from "../components/Notification";
+import LoadingScreen from "../components/LoadingScreen";
+import { Trash2 } from "lucide-react";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -20,6 +21,7 @@ export default function Categories() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [message, setMessage] = useState([]);
   const [messageType, setMessageType] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -28,6 +30,7 @@ export default function Categories() {
   });
 
   useEffect(() => {
+    setIsLoading(true);
     fetch("/api/auth/categories")
       .then((res) => res.json())
       .then((data) => {
@@ -36,6 +39,7 @@ export default function Categories() {
           setRowData(data.categories);
         }
       });
+    setIsLoading(false);
   }, []);
 
   const defaultColDef = useMemo(
@@ -170,27 +174,33 @@ export default function Categories() {
         />
       )}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-orange-500">Category Management</h1>
-        <AddButton setIsModalOpen={setIsModalOpen} table={"Category"} />
+        <h1 className="text-2xl font-bold text-orange-500">
+          Category Management
+        </h1>
+        <Button context="+ Add Category" bgColor="orange" textColor="white" onClick={setIsModalOpen}></Button>
       </div>
 
       <div
         className="ag-theme-alpine p-3"
         style={{ height: 600, width: "100%" }}
       >
-        <AgGridReact
-          rowData={rowData}
-          columnDefs={columnDefs}
-          defaultColDef={defaultColDef}
-          theme={myTheme}
-          rowSelection={rowSelection}
-          editType={"fullRow"}
-          onRowValueChanged={onRowValueChanged}
-          onSelectionChanged={onSelectionChanged}
-        />
+        {isLoading ? (
+          <LoadingScreen />
+        ) : (
+          <AgGridReact
+            rowData={rowData}
+            columnDefs={columnDefs}
+            defaultColDef={defaultColDef}
+            theme={myTheme}
+            rowSelection={rowSelection}
+            editType={"fullRow"}
+            onRowValueChanged={onRowValueChanged}
+            onSelectionChanged={onSelectionChanged}
+          />
+        )}
       </div>
       <div className="flex flex-row-reverse m-0 p-0">
-        <DeleteButton selectedRows={selectedRows} onDelete={onDelete} />
+        <Button context={<Trash2 />} bgColor="red" textColor="white" onClick={onDelete} selectedRows={selectedRows} ></Button>
       </div>
 
       {/* Modal */}
