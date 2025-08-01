@@ -133,28 +133,116 @@ router.post("/logout", (req, res) => {
 
 // Users Table
 router.get("/users", async (req, res) => {
+ try {
+    const swaggerDocs = await fetch(process.env.PGRST_DB_URL);
+    const api = await swaggerDocs.json();
+    const content = await makeRequest(`${process.env.PGRST_DB_URL}users_view`);
+
+    const tableDefinitions = api.definitions?.users_view;
+    const definitions = parseDescription(tableDefinitions.properties);
+
+    res.status(200).json({
+      table: "User",
+      content,
+      definitions,
+    });
+  } catch (err) {
+    console.error("Error Fetching Users: ", err);
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+router.post("/users", async (req, res) => {
   try {
-    const response = await fetch(`${process.env.PGRST_DB_URL}users`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Prefer: "return=representation",
-      },
+    const {first_name, last_name, email, role, created_by} = req.body;
+    const password_hash = await bcrypt.hash(first_name.toLowerCase() + last_name.toLowerCase(), 10);
+    const postObj = {
+      first_name: capitalizeWords(first_name),
+      last_name: capitalizeWords(last_name),
+      email,
+      password: password_hash,
+      role,
+      created_by
+    }
+    const data = await makeRequest(`${process.env.PGRST_DB_URL}users`, {
+      method: "POST",
+      body: JSON.stringify(postObj),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      console.error(error);
-
-      return res.status(response.status).json(error);
-    }
-
-    const data = await response.json();
-
-    res.status(200).json({ users: data });
+    res.status(201).json({
+      message: `New User \'${data[0].first_name} ${data[0].last_name}\' Successfully Created.`,
+      user: data[0],
+    });
   } catch (err) {
-    console.error("Registration error:", err);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error Creating User: ", err);
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
+  }
+})
+
+router.patch("/users", async (req, res) => {
+  try {
+    const { id, first_name, last_name, email, role, updated_by } = req.body;
+    const firstName = capitalizeWords(first_name);
+    const lastName = capitalizeWords(last_name)
+
+    const putObj = {
+      id,
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      role,
+      updated_by,
+    };
+
+    const data = await makeRequest(
+      `${process.env.PGRST_DB_URL}users?id=eq.${id}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(putObj),
+      }
+    );
+
+    res.status(200).json({
+      message: "User Successfully Updated.",
+      user: data[0],
+    });
+  } catch (err) {
+    console.error("Error Updating User: ", err);
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+router.delete("/users", async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    const idFilter = ids.map((id) => `"${id}"`).join(",");
+    const deleted = await makeRequest(
+      `${process.env.PGRST_DB_URL}users?id=in.(${idFilter})`,
+      {
+        method: "DELETE",
+        headers: { Prefer: "return=representation" },
+      }
+    );
+
+    res
+      .status(200)
+      .json({ message: "User(s) Deleted Successfully.", deleted });
+  } catch (err) {
+    console.error("Error Deleting User(s): ", err);
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
@@ -624,7 +712,7 @@ router.post("/products", async (req, res) => {
   }
 });
 
-router.put("/products", async (req, res) => {
+router.patch("/products", async (req, res) => {
   try {
     const { id, product, description, category, status, quantity, updated_by } = req.body;
 
@@ -650,7 +738,7 @@ router.put("/products", async (req, res) => {
     const data = await makeRequest(
       `${process.env.PGRST_DB_URL}products?id=eq.${id}`,
       {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify(postObj),
       }
     );
