@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { getCookie } from "../utils/auth";
 import { createColDef } from "../utils/colDef";
-import { formatColumnName } from "../utils/format";
+import { formatColumnName, reverseFormatColumnName } from "../utils/format";
 
 export const useTableManager = () => {
   const location = useLocation();
@@ -176,7 +176,9 @@ export const useTableManager = () => {
   // Helper function for error messages
   const getErrorMessage = (resData, data, name, operation) => {
     if (resData.error?.code === "23505") {
-      return `The ${name} \'${data[name.toLocaleLowerCase()]}\' Already Exists.`;
+      return location.pathname === "/inventory"
+        ? `This ${name} Already Exists.`
+        : `The ${name} \'${data[name.toLocaleLowerCase()]}\' Already Exists.`;
     }
     if (resData.error?.code === "23503") {
       return `This ${name} Has Connections To Other Tables.`;
