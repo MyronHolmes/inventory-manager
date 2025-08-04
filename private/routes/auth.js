@@ -133,7 +133,7 @@ router.post("/logout", (req, res) => {
 
 // Users Table
 router.get("/users", async (req, res) => {
- try {
+  try {
     const swaggerDocs = await fetch(process.env.PGRST_DB_URL);
     const api = await swaggerDocs.json();
     const content = await makeRequest(`${process.env.PGRST_DB_URL}users_view`);
@@ -157,16 +157,19 @@ router.get("/users", async (req, res) => {
 
 router.post("/users", async (req, res) => {
   try {
-    const {first_name, last_name, email, role, created_by} = req.body;
-    const password_hash = await bcrypt.hash(first_name.toLowerCase() + last_name.toLowerCase(), 10);
+    const { first_name, last_name, email, role, created_by } = req.body;
+    const password_hash = await bcrypt.hash(
+      first_name.toLowerCase() + last_name.toLowerCase(),
+      10
+    );
     const postObj = {
       first_name: capitalizeWords(first_name),
       last_name: capitalizeWords(last_name),
       email,
       password: password_hash,
       role,
-      created_by
-    }
+      created_by,
+    };
     const data = await makeRequest(`${process.env.PGRST_DB_URL}users`, {
       method: "POST",
       body: JSON.stringify(postObj),
@@ -183,13 +186,13 @@ router.post("/users", async (req, res) => {
     }
     res.status(500).json({ message: "Server Error" });
   }
-})
+});
 
 router.patch("/users", async (req, res) => {
   try {
     const { id, first_name, last_name, email, role, updated_by } = req.body;
     const firstName = capitalizeWords(first_name);
-    const lastName = capitalizeWords(last_name)
+    const lastName = capitalizeWords(last_name);
 
     const putObj = {
       id,
@@ -234,9 +237,7 @@ router.delete("/users", async (req, res) => {
       }
     );
 
-    res
-      .status(200)
-      .json({ message: "User(s) Deleted Successfully.", deleted });
+    res.status(200).json({ message: "User(s) Deleted Successfully.", deleted });
   } catch (err) {
     console.error("Error Deleting User(s): ", err);
     if (err.status) {
@@ -249,27 +250,24 @@ router.delete("/users", async (req, res) => {
 // Colors Table
 router.get("/colors", async (req, res) => {
   try {
-    const response = await fetch(`${process.env.PGRST_DB_URL}colors`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Prefer: "return=representation",
-      },
+    const swaggerDocs = await fetch(process.env.PGRST_DB_URL);
+    const api = await swaggerDocs.json();
+    const content = await makeRequest(`${process.env.PGRST_DB_URL}colors_view`);
+
+    const tableDefinitions = api.definitions?.colors_view;
+    const definitions = parseDescription(tableDefinitions.properties);
+
+    res.status(200).json({
+      table: "Color",
+      content,
+      definitions,
     });
-
-    if (!response.ok) {
-      const error = await response.json();
-      console.error("Failed to fetch colors: ", error);
-
-      return res.status(response.status).json(error);
-    }
-
-    const data = await response.json();
-
-    res.status(200).json({ colors: data });
   } catch (err) {
-    console.error("Error fetching colors: ", err);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error Fetching Colors: ", err);
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
@@ -279,105 +277,77 @@ router.post("/colors", async (req, res) => {
     ...req.body,
     color: capitalizeWords(color),
   };
+  console.log(postObj)
   try {
-    const response = await fetch(`${process.env.PGRST_DB_URL}colors`, {
+    const data = await makeRequest(`${process.env.PGRST_DB_URL}colors`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Prefer: "return=representation",
-      },
       body: JSON.stringify(postObj),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      console.error("Failed to create color: ", error);
-      return res.status(response.status).json(error);
-    }
-
-    const newColor = await response.json();
     res.status(201).json({
-      message: `New color \'${newColor[0].color}\' successfully created.`,
-      user: newColor[0],
+      message: `New Color \'${data[0].color}\' Successfully Created.`,
+      color: data[0],
     });
   } catch (err) {
-    console.error("Error creating color: ", err);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error Creating Color: ", err);
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
-router.put("/colors", async (req, res) => {
-  const { id, color, updated_by } = req.body;
-  const postObj = {
-    id,
-    color: capitalizeWords(color),
-    updated_by,
-  };
-
+router.patch("/colors", async (req, res) => {
   try {
-    const response = await fetch(
+    const { id, color, updated_by } = req.body;
+    const patchObj = {
+      id,
+      color: capitalizeWords(color),
+      updated_by,
+    };
+
+    const data = await makeRequest(
       `${process.env.PGRST_DB_URL}colors?id=eq.${id}`,
       {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Prefer: "return=representation",
-        },
-        body: JSON.stringify(postObj),
+        method: "PATCH",
+        body: JSON.stringify(patchObj),
       }
     );
 
-    if (!response.ok) {
-      const error = await response.json();
-      console.error("Failed to update color: ", error);
-      return res.status(response.status).json(error);
-    }
-
-    const newColor = await response.json();
-    res.status(201).json({
-      message: `Color successfully updated to \'${newColor[0].color}\'.`,
-      user: newColor[0],
+    res.status(200).json({
+      message: "Color Successfully Updated.",
+      user: data[0],
     });
   } catch (err) {
-    console.error("Error updating color: ", err);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error Updating Color: ", err);
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
 router.delete("/colors", async (req, res) => {
-  const { ids } = req.body;
-
-  if (!Array.isArray(ids) || ids.length === 0) {
-    return res.status(400).json({ message: "No IDs provided" });
-  }
-
-  const idFilter = ids.map((id) => `"${id}"`).join(",");
-
   try {
-    const response = await fetch(
+    const { ids } = req.body;
+    const idFilter = ids.map((id) => `"${id}"`).join(",");
+    const deleted = await makeRequest(
       `${process.env.PGRST_DB_URL}colors?id=in.(${idFilter})`,
       {
         method: "DELETE",
-        headers: {
-          Prefer: "return=representation",
-        },
+        headers: { Prefer: "return=representation" },
       }
     );
 
-    if (!response.ok) {
-      const error = await response.text();
-      console.error("Failed to delete color(s): ", error);
-      return res.status(response.status).json(error);
-    }
-
-    const deleted = await response.json();
-
     res
       .status(200)
-      .json({ message: "Color(s) deleted successfully.", deleted });
+      .json({ message: "Color(s) Deleted Successfully.", deleted });
   } catch (err) {
-    console.error("Error deleting color(s): ", err);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error Deleting Color(s): ", err);
+    if (err.status) {
+      res.status(err.status).json(err);
+    }
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
@@ -691,7 +661,7 @@ router.post("/products", async (req, res) => {
       category_id: category,
       quantity,
       status,
-      created_by
+      created_by,
     };
 
     const data = await makeRequest(`${process.env.PGRST_DB_URL}products`, {
@@ -714,7 +684,8 @@ router.post("/products", async (req, res) => {
 
 router.patch("/products", async (req, res) => {
   try {
-    const { id, product, description, category, status, quantity, updated_by } = req.body;
+    const { id, product, description, category, status, quantity, updated_by } =
+      req.body;
 
     const catData = await makeRequest(
       `${process.env.PGRST_DB_URL}categories?select=id,category&category=eq.${category}`
