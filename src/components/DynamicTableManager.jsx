@@ -38,6 +38,7 @@ function DynamicTableContent({ defaultFormData = {} }) {
     showNotification,
     hideNotification,
   } = useNotification();
+
   const { isModalOpen, formData, openModal, closeModal, handleInputChange } =
     useModal(defaultFormData);
 
@@ -60,7 +61,7 @@ function DynamicTableContent({ defaultFormData = {} }) {
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-      const result = await createRecord(formData, showNotification);
+      const result = await createRecord(formData, showNotification, title);
       if (result.success) {
         closeModal();
       }
@@ -70,7 +71,7 @@ function DynamicTableContent({ defaultFormData = {} }) {
 
   const onRowValueChanged = useCallback(
     async (event) => {
-      await updateRecord(event.data, showNotification);
+      await updateRecord(event.data, showNotification, title);
     },
     [updateRecord, showNotification]
   );
@@ -89,7 +90,7 @@ function DynamicTableContent({ defaultFormData = {} }) {
       );
 
       if (confirmDelete) {
-        await deleteRecords(rows, showNotification);
+        await deleteRecords(rows, showNotification, title);
         setSelectedRows([]);
       }
     },

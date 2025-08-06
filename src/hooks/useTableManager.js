@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { getCookie } from "../utils/auth";
 import { createColDef } from "../utils/colDef";
-import { formatColumnName } from "../utils/format";
+import { formatColumnName, reverseFormatColumnName } from "../utils/format";
 
 export const useTableManager = () => {
   const location = useLocation();
@@ -21,7 +21,7 @@ export const useTableManager = () => {
     try {
       setTableLoading(true);
       const response = await fetch(`/api/auth${location.pathname}`);
-      if (!response.ok) throw new Error("Failed to fetch table data");
+      if (!response.ok) throw new Error("Failed To Fetch Table Data");
 
       const tableData = await response.json();
       setFormDefs(tableData.definitions);
@@ -69,7 +69,7 @@ export const useTableManager = () => {
   };
 
   const createRecord = useCallback(
-    async (formData, onMessage) => {
+    async (formData, onMessage, name) => {
       setOperationLoading(true);
       try {
         const response = await fetch(`/api/auth${location.pathname}`, {
@@ -85,7 +85,12 @@ export const useTableManager = () => {
           onMessage("success", resData.message);
           return { success: true };
         } else {
-          const errorMessage = getErrorMessage(resData, formData, "Create");
+          const errorMessage = getErrorMessage(
+            resData,
+            formData,
+            name,
+            "Create"
+          );
           onMessage("fail", errorMessage);
           return { success: false, error: errorMessage };
         }
@@ -100,11 +105,11 @@ export const useTableManager = () => {
   );
 
   const updateRecord = useCallback(
-    async (recordData, onMessage) => {
+    async (recordData, onMessage, name) => {
       setOperationLoading(true);
       try {
         const response = await fetch(`/api/auth${location.pathname}`, {
-          method: "PUT",
+          method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...recordData, updated_by: user.id }),
         });
@@ -118,8 +123,8 @@ export const useTableManager = () => {
         } else {
           const errorMessage = getErrorMessage(
             resData,
-            title,
             recordData,
+            name,
             "Update"
           );
           onMessage("fail", errorMessage);
@@ -136,7 +141,7 @@ export const useTableManager = () => {
   );
 
   const deleteRecords = useCallback(
-    async (rows, onMessage) => {
+    async (rows, onMessage, name) => {
       setOperationLoading(true);
       try {
         const ids = rows.map((row) => row.id);
@@ -153,12 +158,13 @@ export const useTableManager = () => {
           onMessage("success", resData.message);
           return { success: true };
         } else {
-          onMessage("fail", `Failed to delete ${title.toLowerCase()}(s)`);
-          return { success: false, error: "Delete failed" };
+          const errorMessage = getErrorMessage(resData, null, name, "Delete");
+          onMessage("fail", errorMessage);
+          return { success: false, error: errorMessage };
         }
       } catch (error) {
         console.error(error);
-        onMessage("fail", "Network error occurred");
+        onMessage("fail", error.message);
         return { success: false, error: error.message };
       } finally {
         setOperationLoading(false);
@@ -168,13 +174,16 @@ export const useTableManager = () => {
   );
 
   // Helper function for error messages
-  const getErrorMessage = (resData, data, operation) => {
+  const getErrorMessage = (resData, data, name, operation) => {
     if (resData.error?.code === "23505") {
-      return `'The ${title} '${data[title.toLowerCase()]}' Already Exists.`;
+      return `This ${name} Already Exists.`
+    }
+    if (resData.error?.code === "23503") {
+      return `This ${name} Has Connections To Other Tables.`;
     }
 
     const operationText = operation === "Create" ? "Add" : operation;
-    return `Failed To ${operationText} '${title}'.`;
+    return `Failed To ${operationText} ${name}.`;
   };
 
   // Initialize on mount
