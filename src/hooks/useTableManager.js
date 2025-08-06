@@ -176,9 +176,7 @@ export const useTableManager = () => {
   // Helper function for error messages
   const getErrorMessage = (resData, data, name, operation) => {
     if (resData.error?.code === "23505") {
-      return location.pathname === "/inventory"
-        ? `This ${name} Already Exists.`
-        : `The ${name} \'${data[name.toLocaleLowerCase()]}\' Already Exists.`;
+      return `This ${name} Already Exists.`
     }
     if (resData.error?.code === "23503") {
       return `This ${name} Has Connections To Other Tables.`;
