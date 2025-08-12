@@ -15,7 +15,7 @@ import { capitalizeWords } from "../utils/format";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-function DynamicTableContent({ defaultFormData = {} }) {
+function DynamicTableContent({ defaultFormData = {}, location, user }) {
   const [selectedRows, setSelectedRows] = useState([]);
   const {
     rowData,
@@ -29,7 +29,7 @@ function DynamicTableContent({ defaultFormData = {} }) {
     updateRecord,
     deleteRecords,
     refreshData,
-  } = useTableManager();
+  } = useTableManager(location, user);
 
   const {
     message,
@@ -42,6 +42,13 @@ function DynamicTableContent({ defaultFormData = {} }) {
   const { isModalOpen, formData, openModal, closeModal, handleInputChange } =
     useModal(defaultFormData);
 
+  const isButtonsDisabled = useMemo(() => {
+    if (location.pathname === "/users") {
+      return user.role !== "admin";
+    }
+    return false;
+  }, [location.pathname, user.role]);
+
   const defaultColDef = useMemo(
     () => ({
       resizable: true,
@@ -51,11 +58,14 @@ function DynamicTableContent({ defaultFormData = {} }) {
     []
   );
   const rowSelection = useMemo(
-    () => ({
-      mode: "multiRow",
-      headerCheckbox: false,
-    }),
-    []
+    () =>
+      isButtonsDisabled
+        ? false
+        : {
+            mode: "multiRow",
+            headerCheckbox: false,
+          },
+    [isButtonsDisabled]
   );
 
   const handleSubmit = useCallback(
@@ -142,6 +152,7 @@ function DynamicTableContent({ defaultFormData = {} }) {
           bgColor="orange"
           textColor="white"
           onClick={openModal}
+          disabled={isButtonsDisabled}
         ></Button>
       </div>
 
@@ -167,6 +178,7 @@ function DynamicTableContent({ defaultFormData = {} }) {
           textColor="white"
           onClick={handleDelete}
           selectedRows={selectedRows}
+          disabled={isButtonsDisabled}
         ></Button>
       </div>
 
