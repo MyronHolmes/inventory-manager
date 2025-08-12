@@ -28,7 +28,8 @@ export const useTableManager = () => {
       setTitle(tableData.table);
 
       if (tableData.content.length > 0) {
-        const rawCols = createColDef(tableData.content[0], location.pathname);
+        //this works but I only want this to happen for the users route. all others should have editable = null for createColDef(). 
+        const rawCols = createColDef(tableData.content[0], location.pathname, user.role === "admin" ? null : false );
         const enhancedCols = enhanceColumns(rawCols, tableData.definitions);
 
         setColumnDefs(enhancedCols);

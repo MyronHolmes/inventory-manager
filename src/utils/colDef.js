@@ -150,7 +150,7 @@ export const tableMap = {
   },
 };
 
-export function createColDef(data, config) {
+export function createColDef(data, config, editable) {
   let tableConfig = {};
   if (config in tableMap) {
     tableConfig = tableMap[config];
@@ -165,6 +165,7 @@ export function createColDef(data, config) {
         ...tableConfig[key],
         field: key,
         headerName: formatColumnName(key),
+        ...(editable != null && { editable })
       };
     }
     return { ...defaultCol, field: key, headerName: formatColumnName(key) };
