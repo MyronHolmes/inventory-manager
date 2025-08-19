@@ -4,24 +4,19 @@ export const Button = ({
   textColor,
   onClick,
   selectedRows,
+  disabled = false,
 }) => {
+  const shouldDisable = disabled || selectedRows?.length === 0;
+
   return (
     <button
       className={`bg-${bgColor}-500 text-${textColor} font-bold py-2 px-4 rounded ${
-        selectedRows?.length === 0
+        shouldDisable
           ? "opacity-50 cursor-not-allowed"
           : `cursor-pointer hover:bg-${bgColor}-600`
       }`}
-      disabled={selectedRows?.length === 0}
-      onClick={
-        selectedRows && selectedRows.length > 0
-          ? () => {
-              onClick?.(selectedRows);
-            }
-          : () => {
-              onClick(true);
-            }
-      }
+      disabled={shouldDisable}
+      onClick={() => onClick?.(selectedRows?.length > 0 ? selectedRows : true)}
     >
       {context}
     </button>

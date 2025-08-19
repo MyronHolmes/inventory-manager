@@ -1,13 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
-import { useLocation } from "react-router-dom";
-import { getCookie } from "../utils/auth";
 import { createColDef } from "../utils/colDef";
-import { formatColumnName, reverseFormatColumnName } from "../utils/format";
+import { formatColumnName } from "../utils/format";
 
-export const useTableManager = () => {
-  const location = useLocation();
-  const user = JSON.parse(getCookie("user"));
-
+export const useTableManager = (location, user) => {
   // State
   const [rowData, setRowData] = useState([]);
   const [columnDefs, setColumnDefs] = useState([]);
@@ -16,6 +11,13 @@ export const useTableManager = () => {
   const [tableLoading, setTableLoading] = useState(true);
   const [error, setError] = useState(null);
   const [operationLoading, setOperationLoading] = useState(false);
+
+  const getEditableValue = () => {
+    if (location.pathname === "/users") {
+      return user.role !== "admin" ? false : null;
+    }
+    return null;
+  };
 
   const fetchTableData = async () => {
     try {
@@ -28,7 +30,11 @@ export const useTableManager = () => {
       setTitle(tableData.table);
 
       if (tableData.content.length > 0) {
-        const rawCols = createColDef(tableData.content[0], location.pathname);
+        const rawCols = createColDef(
+          tableData.content[0],
+          location.pathname,
+          getEditableValue()
+        );
         const enhancedCols = enhanceColumns(rawCols, tableData.definitions);
 
         setColumnDefs(enhancedCols);
@@ -176,7 +182,7 @@ export const useTableManager = () => {
   // Helper function for error messages
   const getErrorMessage = (resData, data, name, operation) => {
     if (resData.error?.code === "23505") {
-      return `This ${name} Already Exists.`
+      return `This ${name} Already Exists.`;
     }
     if (resData.error?.code === "23503") {
       return `This ${name} Has Connections To Other Tables.`;

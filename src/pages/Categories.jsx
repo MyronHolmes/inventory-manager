@@ -1,9 +1,20 @@
+import { useLocation } from "react-router-dom";
 import DynamicTableContent from "../components/DynamicTableManager";
+import { getCookie } from "../utils/auth";
 
-export default function categories() {
   const defaultFormData = {
     category: ""
   };
 
-  return <DynamicTableContent defaultFormData={defaultFormData} />;
+export default function Categories() {
+  const location = useLocation();
+  const user = JSON.parse(getCookie("user"));
+
+  return (
+    <DynamicTableContent
+      defaultFormData={defaultFormData}
+      location={location}
+      user={user}
+    />
+  );
 }
