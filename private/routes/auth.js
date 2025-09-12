@@ -131,6 +131,8 @@ router.post("/logout", (req, res) => {
     .json({ message: "Logged out successfully" });
 });
 
+// Update User Account
+
 // Users Table
 router.get("/users", async (req, res) => {
   try {
@@ -203,17 +205,34 @@ router.patch("/users", async (req, res) => {
       updated_by,
     };
 
-    const data = await makeRequest(
+    const updatedUser = await makeRequest(
       `${process.env.PGRST_DB_URL}users?id=eq.${id}`,
       {
         method: "PATCH",
         body: JSON.stringify(putObj),
       }
     );
-
+    console.log(updatedUser);
+    const userCookie = {
+      id: updatedUser[0].id,
+      firstName: updatedUser[0].first_name,
+      lastName: updatedUser[0].last_name,
+      email: updatedUser[0].email,
+      role: updatedUser[0].role,
+    };
+    const referer = req.headers.referer || "";
+    //If the request comes from the /profile route then the user cookie will update 
+    if (referer.includes("/profile")) {
+      res.cookie("user", JSON.stringify(userCookie), {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      });
+    }
     res.status(200).json({
       message: "User Successfully Updated.",
-      user: data[0],
+      user: updatedUser[0],
     });
   } catch (err) {
     console.error("Error Updating User: ", err);
