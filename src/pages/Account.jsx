@@ -5,7 +5,7 @@ import { useNotification } from "../hooks/useNotification";
 import { useState } from "react";
 import LoadingScreen from "../components/LoadingScreen";
 
-const Profile = () => {
+const Account = () => {
   const userData = JSON.parse(getCookie("user"));
   const [user, setUser] = useState(userData);
   const [isEditing, setIsEditing] = useState(false);
@@ -177,7 +177,7 @@ const Profile = () => {
       <div>
         <a
           className="text-center text-blue-600 underline"
-          href="/profile/password-change"
+          href="/account/password-change"
         >
           Change Your Password
         </a>
@@ -186,4 +186,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default Account;

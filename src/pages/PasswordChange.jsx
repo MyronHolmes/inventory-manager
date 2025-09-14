@@ -75,6 +75,14 @@ const PasswordChange = () => {
             Save
           </button>
         </div>
+              <div>
+        <a
+          className="text-center text-blue-600 underline"
+          href="/account/"
+        >
+          Account Information
+        </a>
+      </div>
       </form>
 
     </div>

@@ -18,7 +18,7 @@ import Categories from "./pages/Categories";
 import Sizes from "./pages/Sizes";
 import Products from "./pages/Products";
 import Inventory from "./pages/Inventory";
-import Profile from "./pages/Profile";
+import Account from "./pages/Account";
 import PasswordChange from "./pages/PasswordChange.jsx";
 
 function AppWrapper() {
@@ -42,8 +42,8 @@ function AppWrapper() {
         {authenticated ? (
           <>
             <Route index element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/profile/password-change" element={<PasswordChange />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/account/password-change" element={<PasswordChange />} />
             <Route path="/logout" element={<Logout />} />
             <Route
               path="/users"

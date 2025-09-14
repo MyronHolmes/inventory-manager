@@ -222,7 +222,7 @@ router.patch("/users", async (req, res) => {
     };
     const referer = req.headers.referer || "";
     //If the request comes from the /profile route then the user cookie will update 
-    if (referer.includes("/profile")) {
+    if (referer.includes("/account")) {
       res.cookie("user", JSON.stringify(userCookie), {
         httpOnly: false,
         secure: process.env.NODE_ENV === "production",
