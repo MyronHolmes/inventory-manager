@@ -45,16 +45,10 @@ const Account = () => {
       });
 
       const resData = await response.json();
-      console.log(resData.user)
       if (response.ok) {
         showNotification("success", resData.message);
-        return { success: true };
       } else {
-        const errorMessage = getErrorMessage(resData, "user", "Update");
-        showNotification("fail", errorMessage);
-      console.log(message, messageType)
-
-        return { success: false, error: errorMessage };
+        showNotification("fail", resData.message);
       }
     } catch (error) {
       console.error(error);
@@ -177,7 +171,7 @@ const Account = () => {
       <div>
         <a
           className="text-center text-blue-600 underline"
-          href="/account/password-change"
+          href="/account/password"
         >
           Change Your Password
         </a>

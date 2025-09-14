@@ -19,7 +19,7 @@ import Sizes from "./pages/Sizes";
 import Products from "./pages/Products";
 import Inventory from "./pages/Inventory";
 import Account from "./pages/Account";
-import PasswordChange from "./pages/PasswordChange.jsx";
+import Password from "./pages/Password.jsx";
 
 function AppWrapper() {
   const location = useLocation();
@@ -43,7 +43,7 @@ function AppWrapper() {
           <>
             <Route index element={<Dashboard />} />
             <Route path="/account" element={<Account />} />
-            <Route path="/account/password-change" element={<PasswordChange />} />
+            <Route path="/account/password" element={<Password />} />
             <Route path="/logout" element={<Logout />} />
             <Route
               path="/users"
