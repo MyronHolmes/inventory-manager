@@ -3,7 +3,7 @@ import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { myTheme } from "../utils/tableConfig";
 import Button from "../components/Button";
-import Notification from "../components/Notification";
+import Notification from "./Notification";
 import { Trash2 } from "lucide-react";
 import { Modal } from "../components/Modal";
 import { Form } from "../components/Form";

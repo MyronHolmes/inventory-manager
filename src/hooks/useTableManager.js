@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { createColDef } from "../utils/colDef";
 import { formatColumnName } from "../utils/format";
+import { getErrorMessage } from "../utils/fetchHelpers";
 
 export const useTableManager = (location, user) => {
   // State
@@ -93,7 +94,6 @@ export const useTableManager = (location, user) => {
         } else {
           const errorMessage = getErrorMessage(
             resData,
-            formData,
             name,
             "Create"
           );
@@ -129,7 +129,6 @@ export const useTableManager = (location, user) => {
         } else {
           const errorMessage = getErrorMessage(
             resData,
-            recordData,
             name,
             "Update"
           );
@@ -164,7 +163,7 @@ export const useTableManager = (location, user) => {
           onMessage("success", resData.message);
           return { success: true };
         } else {
-          const errorMessage = getErrorMessage(resData, null, name, "Delete");
+          const errorMessage = getErrorMessage(resData, name, "Delete");
           onMessage("fail", errorMessage);
           return { success: false, error: errorMessage };
         }
@@ -178,19 +177,6 @@ export const useTableManager = (location, user) => {
     },
     [location.pathname]
   );
-
-  // Helper function for error messages
-  const getErrorMessage = (resData, data, name, operation) => {
-    if (resData.error?.code === "23505") {
-      return `This ${name} Already Exists.`;
-    }
-    if (resData.error?.code === "23503") {
-      return `This ${name} Has Connections To Other Tables.`;
-    }
-
-    const operationText = operation === "Create" ? "Add" : operation;
-    return `Failed To ${operationText} ${name}.`;
-  };
 
   // Initialize on mount
   useEffect(() => {

@@ -21,3 +21,16 @@ export const makeRequest = async (url, options = {}) => {
 
   return response.json();
 };
+
+  // Helper function for error messages
+  export const getErrorMessage = (resData, name, operation) => {
+    if (resData.error?.code === "23505") {
+      return `This ${name} Already Exists.`;
+    }
+    if (resData.error?.code === "23503") {
+      return `This ${name} Has Connections To Other Tables.`;
+    }
+
+    const operationText = operation === "Create" ? "Add" : operation;
+    return `Failed To ${operationText} ${name}.`;
+  };

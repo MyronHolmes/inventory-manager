@@ -131,6 +131,8 @@ router.post("/logout", (req, res) => {
     .json({ message: "Logged out successfully" });
 });
 
+// Update User Account
+
 // Users Table
 router.get("/users", async (req, res) => {
   try {
@@ -190,30 +192,100 @@ router.post("/users", async (req, res) => {
 
 router.patch("/users", async (req, res) => {
   try {
-    const { id, first_name, last_name, email, role, updated_by } = req.body;
-    const firstName = capitalizeWords(first_name);
-    const lastName = capitalizeWords(last_name);
-
-    const putObj = {
+    let putObj = {};
+    const {
       id,
-      first_name: firstName,
-      last_name: lastName,
+      first_name,
+      last_name,
       email,
       role,
+      currentPassword,
+      newPassword,
       updated_by,
-    };
+    } = req.body;
+    if (!currentPassword && !newPassword) {
+      const firstName = capitalizeWords(first_name);
+      const lastName = capitalizeWords(last_name);
 
-    const data = await makeRequest(
+      putObj = {
+        id,
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        role,
+        updated_by,
+      };
+    } else if (currentPassword && newPassword) {
+      const userData = await makeRequest(
+        `${process.env.PGRST_DB_URL}users?id=eq.${id}`
+      );
+      const user = userData[0];
+      const resData = {
+        id: user.id,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        email: user.email,
+        role: user.role,
+      };
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) {
+        return res
+          .status(401)
+          .json({ message: "Current Password Is Incorrect.", user: resData });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      putObj = {
+        password: hashedPassword,
+        updated_by: id,
+      };
+    } else {
+      return res
+        .status(400)
+        .json({
+          message: "Both Current And New Password Are Required.",
+          user: resData,
+        });
+    }
+    const updatedUser = await makeRequest(
       `${process.env.PGRST_DB_URL}users?id=eq.${id}`,
       {
         method: "PATCH",
         body: JSON.stringify(putObj),
       }
     );
+    console.log(putObj, updatedUser);
 
+    let referer = req.headers.referer || "";
+    let pathname = "";
+
+    //If the request comes from the /account route then the user cookie will update
+    if (referer?.includes("/account")) {
+      referer = new URL(referer);
+      pathname = referer.pathname;
+      if (pathname.startsWith("/account/")) {
+        pathname = pathname.replace("/account", "");
+      }
+      
+      const userCookie = {
+        id: updatedUser[0].id,
+        firstName: updatedUser[0].first_name,
+        lastName: updatedUser[0].last_name,
+        email: updatedUser[0].email,
+        role: updatedUser[0].role,
+      };
+      res.cookie("user", JSON.stringify(userCookie), {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      });
+    }
+    let message = `Your ${capitalizeWords(pathname.substring(1))} Has Been Updated.`;
     res.status(200).json({
-      message: "User Successfully Updated.",
-      user: data[0],
+      message: referer.includes("/users") ? "User Successfully Updated." : message,
+      user: updatedUser[0],
     });
   } catch (err) {
     console.error("Error Updating User: ", err);

@@ -18,6 +18,8 @@ import Categories from "./pages/Categories";
 import Sizes from "./pages/Sizes";
 import Products from "./pages/Products";
 import Inventory from "./pages/Inventory";
+import Account from "./pages/Account";
+import Password from "./pages/Password.jsx";
 
 function AppWrapper() {
   const location = useLocation();
@@ -36,10 +38,12 @@ function AppWrapper() {
           path="/login"
           element={authenticated ? <Navigate to="/" replace /> : <Login />}
         />
-
+        
         {authenticated ? (
           <>
             <Route index element={<Dashboard />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/account/password" element={<Password />} />
             <Route path="/logout" element={<Logout />} />
             <Route
               path="/users"
