@@ -1,5 +1,4 @@
 import { getCookie } from "../utils/auth";
-import { getErrorMessage } from "../utils/fetchHelpers";
 import Notification from "../components/Notification";
 import { useNotification } from "../hooks/useNotification";
 import { useState } from "react";
@@ -48,7 +47,6 @@ const Account = () => {
       const resData = await response.json();
       if (response.ok) {
         showNotification("success", resData.message);
-        
       } else {
         showNotification(
           "fail",
@@ -175,7 +173,6 @@ const Account = () => {
             </div>
           </form>
         )}
-
         <div>
           <a
             className="text-center text-blue-600 underline"

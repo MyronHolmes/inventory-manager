@@ -260,7 +260,7 @@ router.patch("/users", async (req, res) => {
     let referer = req.headers.referer || "";
     let pathname = "";
 
-    //If the request comes from the /profile route then the user cookie will update
+    //If the request comes from the /account route then the user cookie will update
     if (referer?.includes("/account")) {
       referer = new URL(referer);
       pathname = referer.pathname;
@@ -284,7 +284,7 @@ router.patch("/users", async (req, res) => {
     }
     let message = `Your ${capitalizeWords(pathname.substring(1))} Has Been Updated.`;
     res.status(200).json({
-      message: referer === "/users" ? "User Successfully Updated." : message,
+      message: referer.includes("/users") ? "User Successfully Updated." : message,
       user: updatedUser[0],
     });
   } catch (err) {
