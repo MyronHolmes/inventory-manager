@@ -13,6 +13,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/users.js"
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -25,8 +26,8 @@ app.use(cors({
 app.use(bodyParser.json());
 app.set("trust proxy", 1); 
 
-// Routes
-app.use("/api/auth", authRoutes);
+// User Route
+app.use("/api", userRoutes);
 
 // Root route
 app.get("/", (req, res) => {

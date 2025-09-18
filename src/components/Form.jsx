@@ -1,4 +1,5 @@
-import { capitalizeWords, formatColumnName } from "../utils/format";
+import { formatColumnName } from "../utils/format";
+import { capitalizeWords } from "../../shared/utils/helperFunctions";
 
 export const Form = ({
   title,

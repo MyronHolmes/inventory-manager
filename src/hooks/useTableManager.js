@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { createColDef } from "../utils/colDef";
 import { formatColumnName } from "../utils/format";
 import { getErrorMessage } from "../utils/fetchHelpers";
+import { makeRequest } from "../../shared/utils/helperFunctions";
 
 export const useTableManager = (location, user) => {
   // State
@@ -10,7 +11,7 @@ export const useTableManager = (location, user) => {
   const [formDefs, setFormDefs] = useState({});
   const [title, setTitle] = useState("");
   const [tableLoading, setTableLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [operationLoading, setOperationLoading] = useState(false);
 
   const getEditableValue = () => {
@@ -23,10 +24,8 @@ export const useTableManager = (location, user) => {
   const fetchTableData = async () => {
     try {
       setTableLoading(true);
-      const response = await fetch(`/api/auth${location.pathname}`);
-      if (!response.ok) throw new Error("Failed To Fetch Table Data");
-
-      const tableData = await response.json();
+      const tableData = await makeRequest(`/api${location.pathname}`);
+      
       setFormDefs(tableData.definitions);
       setTitle(tableData.table);
 
@@ -41,8 +40,9 @@ export const useTableManager = (location, user) => {
         setColumnDefs(enhancedCols);
         setRowData(tableData.content);
       }
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.log(err)
+      setError(err?.details?.error?.message || err.message)
     } finally {
       setTableLoading(false);
     }
@@ -79,7 +79,7 @@ export const useTableManager = (location, user) => {
     async (formData, onMessage, name) => {
       setOperationLoading(true);
       try {
-        const response = await fetch(`/api/auth${location.pathname}`, {
+        const response = await fetch(`/api${location.pathname}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...formData, created_by: user.id }),
@@ -114,7 +114,7 @@ export const useTableManager = (location, user) => {
     async (recordData, onMessage, name) => {
       setOperationLoading(true);
       try {
-        const response = await fetch(`/api/auth${location.pathname}`, {
+        const response = await fetch(`/api${location.pathname}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...recordData, updated_by: user.id }),
@@ -151,7 +151,7 @@ export const useTableManager = (location, user) => {
       try {
         const ids = rows.map((row) => row.id);
 
-        const response = await fetch(`/api/auth${location.pathname}`, {
+        const response = await fetch(`/api${location.pathname}`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ids }),

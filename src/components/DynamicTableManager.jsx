@@ -11,7 +11,7 @@ import { useTableManager } from "../hooks/useTableManager";
 import { useNotification } from "../hooks/useNotification";
 import { useModal } from "../hooks/useModal";
 import LoadingScreen from "../components/LoadingScreen";
-import { capitalizeWords } from "../utils/format";
+import { capitalizeWords } from "../../shared/utils/helperFunctions"; 
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

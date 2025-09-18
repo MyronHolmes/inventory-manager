@@ -27,11 +27,14 @@ const Account = () => {
     if (JSON.stringify(user) === JSON.stringify(userData)) {
       setIsEditing(false);
       return;
+    } else if (!user.firstName || !user.lastName || !user.email) {
+      showNotification("fail", "Please Complete The Form");
+      return
     }
     setIsEditing(false);
     setLoading(true);
     try {
-      const response = await fetch("/api/auth/users", {
+      const response = await fetch("/api/users", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

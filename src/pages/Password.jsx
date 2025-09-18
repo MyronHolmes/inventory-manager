@@ -42,13 +42,14 @@ const Password = () => {
     }
     setLoading(true);
     try {
-      const response = await fetch("/api/auth/users", {
+      const response = await fetch("/api/users/password", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: userData.id,
           currentPassword: formData.currentPassword,
           newPassword: formData.newPassword,
+          updatedBy: userData.id
         }),
       });
       const resData = await response.json();
@@ -58,7 +59,7 @@ const Password = () => {
         showNotification("success", resData.message);
       } else {
         console.log(response)
-        showNotification("fail", response.status === 401 ? resData.message : "There Was An Error Updating Your Password.");
+        showNotification("fail", response.status === 401 ? resData.message : resData?.error?.details?.error?.message || "There Was An Error Updating Your Password.");
       }
     } catch (error) {
       console.error(error);

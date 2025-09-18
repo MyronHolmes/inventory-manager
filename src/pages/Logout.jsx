@@ -6,7 +6,7 @@ export default function Logout() {
   const [message, setMessage] = useState("Logging out...");
 
   useEffect(() => {
-    fetch("/api/auth/logout", {
+    fetch("/api/logout", {
       method: "POST",
       credentials: "include",
     })
