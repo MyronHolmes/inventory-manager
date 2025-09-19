@@ -24,6 +24,7 @@ export const useTableManager = (location, user) => {
   const fetchTableData = async () => {
     try {
       setTableLoading(true);
+      setError("");
       const tableData = await makeRequest(`/api${location.pathname}`);
       
       setFormDefs(tableData.definitions);
@@ -42,7 +43,7 @@ export const useTableManager = (location, user) => {
       }
     } catch (err) {
       console.log(err)
-      setError(err?.details?.error?.message || err.message)
+      setError(`${err.message}: ${err.info.message}`)
     } finally {
       setTableLoading(false);
     }
@@ -86,7 +87,7 @@ export const useTableManager = (location, user) => {
         });
 
         const resData = await response.json();
-
+        console.log(resData)
         if (response.ok) {
           await fetchTableData();
           onMessage("success", resData.message);
@@ -100,9 +101,9 @@ export const useTableManager = (location, user) => {
           onMessage("fail", errorMessage);
           return { success: false, error: errorMessage };
         }
-      } catch (error) {
-        console.error(error);
-        return { success: false, error: error.message };
+      } catch (err) {
+        console.error(err);
+        return { success: false, error: `${err.message}: ${err.info.message}` };
       } finally {
         setOperationLoading(false);
       }
@@ -137,7 +138,7 @@ export const useTableManager = (location, user) => {
         }
       } catch (error) {
         console.error(error);
-        return { success: false, error: error.message };
+        return {success: false, error: `${err.message}: ${err.info.message}` };
       } finally {
         setOperationLoading(false);
       }
@@ -167,10 +168,10 @@ export const useTableManager = (location, user) => {
           onMessage("fail", errorMessage);
           return { success: false, error: errorMessage };
         }
-      } catch (error) {
-        console.error(error);
-        onMessage("fail", error.message);
-        return { success: false, error: error.message };
+      } catch (err) {
+        console.error(err);
+        onMessage("fail", err.message);
+        return { success: false, error: `${err.message}: ${err.info.message}` };
       } finally {
         setOperationLoading(false);
       }

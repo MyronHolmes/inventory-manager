@@ -9,11 +9,12 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {
-  makeRequest,
   parseDescription,
   capitalizeWords,
 } from "../../shared/utils/helperFunctions.js";
 import { userCookieObj } from "../utils/helperFunctions.js";
+import * as User from "../models/userModel.js";
+import { sendError, sendResponse } from "../utils/response.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -135,24 +136,19 @@ export const logoutUser = (req, res) => {
 // Get Users
 export const getUsers = async (req, res) => {
   try {
-    const swaggerDocs = await fetch(process.env.PGRST_DB_URL);
-    const api = await swaggerDocs.json();
-    const content = await makeRequest(`${process.env.PGRST_DB_URL}users_view`);
-
-    const tableDefinitions = api.definitions?.users_view;
+    const api = await User.getSwaggerDocs();
+    const content = await User.getAllUsers();
+    const tableDefinitions = api?.definitions?.users_view;
     const definitions = parseDescription(tableDefinitions.properties);
-
-    res.status(200).json({
+    const resObj = {
       table: "User",
       content,
       definitions,
-    });
+    };
+
+    sendResponse(res, resObj);
   } catch (err) {
-    console.error(err);
-    if (err.status) {
-      res.status(err.status).json(err);
-    }
-    res.status(500).json({ message: "Server Error" });
+    sendError(res, err);
   }
 };
 
@@ -172,20 +168,16 @@ export const postUser = async (req, res) => {
       role,
       created_by,
     };
-    const data = await makeRequest(`${process.env.PGRST_DB_URL}users`, {
-      method: "POST",
-      body: JSON.stringify(postObj),
-    });
 
-    res.status(201).json({
-      message: `New User \'${data[0].first_name} ${data[0].last_name}\' Successfully Created.`,
-      user: data[0],
-    });
+    const user = await User.createUser(postObj);
+    const resObj = {
+      message: `New User \'${user.first_name} ${user.last_name}\' Successfully Created.`,
+      user,
+    };
+
+    sendResponse(res, resObj, 201);
   } catch (err) {
-    if (err.status) {
-      res.status(err.status).json(err);
-    }
-    res.status(500).json({ message: "Server Error" });
+    sendError(res, err);
   }
 };
 
@@ -193,11 +185,9 @@ export const postUser = async (req, res) => {
 export const patchUser = async (req, res) => {
   try {
     const { id, first_name, last_name, email, role, updated_by } = req.body;
-
     const firstName = capitalizeWords(first_name);
     const lastName = capitalizeWords(last_name);
-
-    let patchObj = {
+    const patchObj = {
       id,
       first_name: firstName,
       last_name: lastName,
@@ -206,22 +196,16 @@ export const patchUser = async (req, res) => {
       updated_by,
     };
 
-    const updatedUser = await makeRequest(
-      `${process.env.PGRST_DB_URL}users?id=eq.${id}`,
-      {
-        method: "PATCH",
-        body: JSON.stringify(patchObj),
-      }
-    );
+    const user = await User.updateUser(id, patchObj);
 
-    let referer = req.headers.referer || "";
+    let referer = req?.headers?.referer || "";
     let message = "User Successfully Updated.";
 
     // If the request comes from the /account route then the user cookie will update
-    if (!referer?.includes("/users")) {
-      message = "Your Account Has Been Updated."
-      
-      const userCookie = userCookieObj(updatedUser[0]);
+    if (referer?.includes("/account")) {
+      message = "Your Account Has Been Updated.";
+
+      const userCookie = userCookieObj(user);
       res.cookie("user", JSON.stringify(userCookie), {
         httpOnly: false,
         secure: process.env.NODE_ENV === "production",
@@ -229,32 +213,33 @@ export const patchUser = async (req, res) => {
         path: "/",
       });
     }
-    res.status(200).json({
-      message: message,
-      user: updatedUser[0],
-    });
+
+    const resData = {
+      message,
+      user,
+    };
+
+    sendResponse(res, resData);
   } catch (err) {
-    if (err.status) {
-      res.status(err.status).json(err);
-    }
-    res.status(500).json({ message: "Server Error" });
+    sendError(res, err);
   }
 };
-
+// Patch Users Password
 export const patchPassword = async (req, res) => {
   try {
     const { id, currentPassword, newPassword, updatedBy } = req.body;
 
-    const userData = await makeRequest(
-      `${process.env.PGRST_DB_URL}users?id=eq.${id}`
-    );
-    const user = userData[0];
-
+    const user = await User.getUserById(id);
+    console.log(user)
     const isMatch = await bcrypt.compare(currentPassword, user.password);
+    console.log("THIS IS ISMATCH, " + isMatch)
     if (!isMatch) {
-      return res
-        .status(401)
-        .json({ message: "Current Password Is Incorrect.", user: resData });
+      sendResponse(
+        res,
+        { info: { message: "Current Password Is Incorrect." } },
+        401
+      );
+      return;
     }
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
@@ -263,23 +248,14 @@ export const patchPassword = async (req, res) => {
       updated_by: updatedBy,
     };
 
-    const updatedUser = await makeRequest(
-      `${process.env.PGRST_DB_URL}users?id=eq.${id}`,
-      {
-        method: "PATCH",
-        body: JSON.stringify(patchObj),
-      }
-    );
-
-    res.status(200).json({
-       message: "Your Password Has Been Updated.",
-      user: updatedUser[0],
-    });
+    const updatedUser = await User.updateUser(id, patchObj);
+    const resData = {
+      message: "Your Password Has Been Updated.",
+      user: updatedUser,
+    };
+    sendResponse(res, resData);
   } catch (err) {
-    if (err.status) {
-      res.status(err.status).json(err);
-    }
-    res.status(500).json({ message: "Server Error" });
+    sendError(res, err);
   }
 };
 
@@ -289,19 +265,11 @@ export const deleteUser = async (req, res) => {
     const { ids } = req.body;
 
     const idFilter = ids.map((id) => `"${id}"`).join(",");
-    const deleted = await makeRequest(
-      `${process.env.PGRST_DB_URL}users?id=in.(${idFilter})`,
-      {
-        method: "DELETE",
-        headers: { Prefer: "return=representation" },
-      }
-    );
+    const deleted = await User.deleteUser(idFilter);
+    const resData = { message: "User(s) Deleted Successfully.", deleted };
 
-    res.status(200).json({ message: "User(s) Deleted Successfully.", deleted });
+    sendResponse(res, resData);
   } catch (err) {
-    if (err.status) {
-      res.status(err.status).json(err);
-    }
-    res.status(500).json({ message: "Server Error" });
+    sendError(res, err);
   }
 };

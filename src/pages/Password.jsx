@@ -59,11 +59,11 @@ const Password = () => {
         showNotification("success", resData.message);
       } else {
         console.log(response)
-        showNotification("fail", response.status === 401 ? resData.message : resData?.error?.details?.error?.message || "There Was An Error Updating Your Password.");
+        showNotification("fail", `${resData.info.message}`);
       }
-    } catch (error) {
-      console.error(error);
-      return { success: false, error: error.message };
+    } catch (err) {
+      console.error(err);
+      return showNotification("fail", `${err.message}: ${err.info.message}`);
     } finally {
       setLoading(false);
     }

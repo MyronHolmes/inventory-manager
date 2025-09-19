@@ -10,7 +10,7 @@ export const makeRequest = async (route, options = {}) => {
   });
   if (!response.ok) {
     const error = await response.json();
-    throw { status: response.status, details: error, route };
+    throw { info: {...error, status: response.status, route} };
   }
 
   return response.json();
