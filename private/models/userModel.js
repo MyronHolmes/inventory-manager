@@ -15,6 +15,14 @@ export const getSwaggerDocs = async () => {
   return api;
 };
 
+// Login User
+export const loginUser = async (email) => {
+  const login = await makeRequest(
+    `${API_URL}users?email=eq.${encodeURIComponent(email)}`
+  );
+  return login[0];
+};
+
 // Get All Users
 export const getAllUsers = async () => {
   const users = await makeRequest(`${API_URL}users_view`);
@@ -23,11 +31,9 @@ export const getAllUsers = async () => {
 
 // Get User
 export const getUserById = async (id) => {
-    const user = await makeRequest(
-      `${API_URL}users?id=eq.${id}`
-    );
-    return user[0]
-}
+  const user = await makeRequest(`${API_URL}users?id=eq.${id}`);
+  return user[0];
+};
 
 // Create User
 export const createUser = async (postObj) => {
@@ -49,12 +55,9 @@ export const updateUser = async (id, patchObj) => {
 
 // Delete User(s)
 export const deleteUser = async (idList) => {
-    const user = await makeRequest(
-      `${API_URL}users?id=in.(${idList})`,
-      {
-        method: "DELETE",
-        headers: { Prefer: "return=representation" },
-      }
-    );
-    return user;
-} 
+  const user = await makeRequest(`${API_URL}users?id=in.(${idList})`, {
+    method: "DELETE",
+    headers: { Prefer: "return=representation" },
+  });
+  return user;
+};

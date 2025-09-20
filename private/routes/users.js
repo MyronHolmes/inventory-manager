@@ -7,13 +7,9 @@ import {
   patchPassword,
   patchUser,
   postUser,
-  registerUser,
 } from "../controllers/userController.js";
 
 const router = express.Router();
-// Register User
-router.post("/register", registerUser);
-
 // Login User
 router.post("/login", loginUser);
 
@@ -30,7 +26,7 @@ router.post("/users", postUser);
 router.patch("/users", patchUser);
 
 // Patch Users Password
-router.patch("/users/password", patchPassword)
+router.patch("/users/password", patchPassword);
 
 // Delete Users
 router.delete("/users", deleteUser);

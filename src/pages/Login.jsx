@@ -27,7 +27,7 @@ export default function Login() {
 
       if (!response.ok) {
         const err = await response.json();
-        setError(err.message || "Login failed.");
+        setError(err.info.message);
         setLoading(false);
         return;
       }

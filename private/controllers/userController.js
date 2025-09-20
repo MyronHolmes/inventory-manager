@@ -1,11 +1,3 @@
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
-
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {
@@ -18,72 +10,19 @@ import { sendError, sendResponse } from "../utils/response.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Register User
-export const registerUser = async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password)
-    return res.status(400).json({ message: "Missing Email Or Password" });
-
-  const password_hash = await bcrypt.hash(password, 10);
-  let bodyObj = {
-    ...req.body,
-    password: password_hash,
-  };
-
-  try {
-    const response = await fetch(`${process.env.PGRST_DB_URL}users`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Prefer: "return=representation",
-      },
-      body: JSON.stringify(bodyObj),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      return res.status(response.status).json(error);
-    }
-
-    const newUser = await response.json();
-    res
-      .status(201)
-      .json({ message: "User Created Successfully", user: newUser[0] });
-  } catch (err) {
-    res.status(500).json({ message: "Server Error" });
-  }
-};
-
 // Login User
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password)
-    return res.status(400).json({ message: "Missing Email Or Password" });
-
-  try {
-    const response = await fetch(
-      `${process.env.PGRST_DB_URL}users?email=eq.${encodeURIComponent(email)}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
+    return sendResponse(
+      res,
+      { info: { message: "Missing Email Or Password" } },
+      400
     );
 
-    if (!response.ok) {
-      return res
-        .status(response.status)
-        .json({ message: "User Lookup Failed" });
-    }
+  try {
+    const user = await User.loginUser(email);
 
-    const users = await response.json();
-    if (users.length === 0) {
-      return res.status(401).json({ message: "Invalid Credentials" });
-    }
-
-    const user = users[0];
     const userCookie = {
       id: user.id,
       firstName: user.first_name,
@@ -91,9 +30,14 @@ export const loginUser = async (req, res) => {
       email: user.email,
       role: user.role,
     };
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid Credentials" });
+      return sendResponse(
+        res,
+        { info: { message: "Invalid Credentials" } },
+        401
+      );
     }
 
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
@@ -111,7 +55,7 @@ export const loginUser = async (req, res) => {
       .status(200)
       .json({ message: "Login Successful", user: userCookie });
   } catch (err) {
-    res.status(500).json({ message: "Server Error" });
+    sendError(res, err);
   }
 };
 
@@ -230,9 +174,9 @@ export const patchPassword = async (req, res) => {
     const { id, currentPassword, newPassword, updatedBy } = req.body;
 
     const user = await User.getUserById(id);
-    console.log(user)
+    console.log(user);
     const isMatch = await bcrypt.compare(currentPassword, user.password);
-    console.log("THIS IS ISMATCH, " + isMatch)
+    console.log("THIS IS ISMATCH, " + isMatch);
     if (!isMatch) {
       sendResponse(
         res,
