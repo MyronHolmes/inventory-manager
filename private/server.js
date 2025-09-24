@@ -15,6 +15,8 @@ import bodyParser from "body-parser";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import colorRoutes from "./routes/colors.js";
+import categoryRoutes from "./routes/categories.js";
+
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -34,6 +36,9 @@ app.use("/api", userRoutes);
 
 // Color Route
 app.use("/api", colorRoutes);
+
+// Category Route
+app.use("/api", categoryRoutes);
 
 // Root route
 app.get("/", (req, res) => {

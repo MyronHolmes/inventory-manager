@@ -5,8 +5,6 @@ import {
 import * as Color from "../models/colorModel.js";
 import { sendError, sendResponse } from "../utils/response.js";
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
 // Colors Table
 export const getColors = async (req, res) => {
   try {

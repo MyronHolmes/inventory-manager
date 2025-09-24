@@ -15,38 +15,38 @@ export const getSwaggerDocs = async () => {
   return api;
 };
 
-// Get All Colors
-export const getAllColors = async () => {
-  const colors = await makeRequest(`${API_URL}colors_view`);
-  return colors;
+// Get All Categories
+export const getAllCategories = async () => {
+  const categories = await makeRequest(`${API_URL}categories_view`);
+  return categories;
 };
 
-// Create Color
-export const createColor = async (postObj) => {
-  const color = await makeRequest(`${API_URL}colors`, {
+// Create Category
+export const createCategory = async (postObj) => {
+  const category = await makeRequest(`${API_URL}categories`, {
     method: "POST",
     body: JSON.stringify(postObj),
   });
-  return color[0];
+  return category[0];
 };
 
-// Update Color
-export const updateColor = async (id, patchObj) => {
-  const color = await makeRequest(`${API_URL}colors?id=eq.${id}`, {
+// Update Category
+export const updateCategory = async (id, patchObj) => {
+  const category = await makeRequest(`${API_URL}categories?id=eq.${id}`, {
     method: "PATCH",
     body: JSON.stringify(patchObj),
   });
-  return color[0];
+  return category[0];
 };
 
-// Delete Color(s)
-export const deleteColor = async (idFilter) => {
-  const color = await makeRequest(
-    `${process.env.PGRST_DB_URL}colors?id=in.(${idFilter})`,
+// Delete Category(ies)
+export const deleteCategory = async (idFilter) => {
+  const category = await makeRequest(
+    `${process.env.PGRST_DB_URL}categories?id=in.(${idFilter})`,
     {
       method: "DELETE",
       headers: { Prefer: "return=representation" },
     }
   );
-  return color;
+  return category;
 };
