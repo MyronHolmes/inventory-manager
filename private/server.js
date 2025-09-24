@@ -16,6 +16,8 @@ import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import colorRoutes from "./routes/colors.js";
 import categoryRoutes from "./routes/categories.js";
+import sizeRoutes from "./routes/sizes.js";
+
 
 
 const app = express();
@@ -39,6 +41,9 @@ app.use("/api", colorRoutes);
 
 // Category Route
 app.use("/api", categoryRoutes);
+
+// Size Route
+app.use("/api", sizeRoutes);
 
 // Root route
 app.get("/", (req, res) => {
