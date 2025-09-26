@@ -17,6 +17,8 @@ import userRoutes from "./routes/users.js";
 import colorRoutes from "./routes/colors.js";
 import categoryRoutes from "./routes/categories.js";
 import sizeRoutes from "./routes/sizes.js";
+import productRoutes from "./routes/products.js";
+
 
 
 
@@ -44,6 +46,9 @@ app.use("/api", categoryRoutes);
 
 // Size Route
 app.use("/api", sizeRoutes);
+
+// Product Route
+app.use("/api", productRoutes);
 
 // Root route
 app.get("/", (req, res) => {

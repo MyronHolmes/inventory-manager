@@ -14,107 +14,6 @@ import { makeRequest, parseDescription, capitalizeWords } from "../../shared/uti
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Sizes Table
-router.get("/sizes", async (req, res) => {
-  try {
-    const swaggerDocs = await fetch(process.env.PGRST_DB_URL);
-    const api = await swaggerDocs.json();
-    const content = await makeRequest(`${process.env.PGRST_DB_URL}sizes_view`);
-
-    const tableDefinitions = api.definitions?.sizes_view;
-    const definitions = parseDescription(tableDefinitions.properties);
-
-    res.status(200).json({
-      table: "Size",
-      content,
-      definitions,
-    });
-  } catch (err) {
-    console.error("Error Fetching Size: ", err);
-    if (err.status) {
-      res.status(err.status).json(err);
-    }
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
-router.post("/sizes", async (req, res) => {
-  try {
-    const { size } = req.body;
-    const postObj = {
-      ...req.body,
-      size: capitalizeWords(size),
-    };
-    const data = await makeRequest(`${process.env.PGRST_DB_URL}sizes`, {
-      method: "POST",
-      body: JSON.stringify(postObj),
-    });
-
-    res.status(201).json({
-      message: `New Size \'${data[0].size}\' Successfully Created.`,
-      size: data[0],
-    });
-  } catch (err) {
-    console.error("Error Creating Size: ", err);
-    if (err.status) {
-      res.status(err.status).json(err);
-    }
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
-router.patch("/sizes", async (req, res) => {
-  try {
-    const { size, id, updated_by } = req.body;
-    const patchObj = {
-      id,
-      size: capitalizeWords(size),
-      updated_by,
-    };
-
-    const data = await makeRequest(
-      `${process.env.PGRST_DB_URL}sizes?id=eq.${id}`,
-      {
-        method: "PATCH",
-        body: JSON.stringify(patchObj),
-      }
-    );
-
-    res.status(200).json({
-      message: "Size Successfully Updated.",
-      size: data[0],
-    });
-  } catch (err) {
-    console.error("Error Updating Size: ", err);
-    if (err.status) {
-      res.status(err.status).json(err);
-    }
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
-router.delete("/sizes", async (req, res) => {
-  try {
-    const { ids } = req.body;
-    const idFilter = ids.map((id) => `"${id}"`).join(",");
-    const deleted = await makeRequest(
-      `${process.env.PGRST_DB_URL}sizes?id=in.(${idFilter})`,
-      {
-        method: "DELETE",
-        headers: { Prefer: "return=representation" },
-      }
-    );
-
-    res.status(200).json({ message: "Size(s) Deleted Successfully.", deleted });
-  } catch (err) {
-    console.error("Error Deleting Size(s): ", err);
-    if (err.status) {
-      res.status(err.status).json(err);
-    }
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
 // Products Table
 router.get("/products", async (req, res) => {
   try {
@@ -191,7 +90,6 @@ router.patch("/products", async (req, res) => {
         .status(400)
         .json({ message: `Category '${category}' not found` });
     }
-    console.log(catData);
     const patchObj = {
       id,
       product: capitalizeWords(product),
