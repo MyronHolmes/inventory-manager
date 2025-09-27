@@ -44,7 +44,7 @@ export const postProduct = async (req, res) => {
 
     const productData = await Product.createProduct(postObj);
     const resData = {
-      message: `New Product \'${productData.size}\' Successfully Created.`,
+      message: `New Product \'${productData.product}\' Successfully Created.`,
       product: productData,
     };
 
@@ -80,7 +80,7 @@ export const patchProduct = async (req, res) => {
     const productData = Product.updateProduct(id, patchObj);
     const resData = {
       message: "Product Successfully Updated.",
-      size: productData,
+      product: productData,
     };
     sendResponse(res, resData);
   } catch (err) {

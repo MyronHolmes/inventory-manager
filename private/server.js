@@ -18,6 +18,8 @@ import colorRoutes from "./routes/colors.js";
 import categoryRoutes from "./routes/categories.js";
 import sizeRoutes from "./routes/sizes.js";
 import productRoutes from "./routes/products.js";
+import inventoryRoutes from "./routes/inventory.js";
+
 
 
 
@@ -49,6 +51,9 @@ app.use("/api", sizeRoutes);
 
 // Product Route
 app.use("/api", productRoutes);
+
+// Inventory Route
+app.use("/api", inventoryRoutes);
 
 // Root route
 app.get("/", (req, res) => {
