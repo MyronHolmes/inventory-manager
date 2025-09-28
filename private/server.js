@@ -12,7 +12,6 @@ console.log("PGRST_DB_URL:", process.env.PGRST_DB_URL);
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import colorRoutes from "./routes/colors.js";
 import categoryRoutes from "./routes/categories.js";
