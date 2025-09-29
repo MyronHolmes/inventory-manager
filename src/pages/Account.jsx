@@ -5,8 +5,8 @@ import { useState } from "react";
 import LoadingScreen from "../components/LoadingScreen";
 
 const Account = () => {
-  const userData = JSON.parse(getCookie("user"));
-  const [user, setUser] = useState(userData);
+  const [userCookie, setUserCookie] = useState(JSON.parse(getCookie("user")));
+  const [user, setUser] = useState(userCookie);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -24,14 +24,16 @@ const Account = () => {
   };
 
   const handleSave = async () => {
-    if (JSON.stringify(user) === JSON.stringify(userData)) {
+    if (JSON.stringify(user) === JSON.stringify(userCookie)) {
       setIsEditing(false);
       return;
+    } else if (!user.firstName || !user.lastName || !user.email) {
+      showNotification("fail", "Please Complete The Form");
+      return;
     }
-    setIsEditing(false);
     setLoading(true);
     try {
-      const response = await fetch("/api/auth/users", {
+      const response = await fetch("/api/users", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -46,18 +48,22 @@ const Account = () => {
 
       const resData = await response.json();
       if (response.ok) {
+        setUser({
+          id: resData.user.id,
+          firstName: resData.user.first_name,
+          lastName: resData.user.last_name,
+          email: resData.user.email,
+          role: resData.user.role,
+        });
+        setUserCookie(user)
+        setIsEditing(false);
         showNotification("success", resData.message);
       } else {
-        showNotification(
-          "fail",
-          resData.error === "23505"
-            ? "This Email Already Exists On A Different Account."
-            : "Sorry, There Was An Error Updating Your Account."
-        );
+        showNotification("fail", `${resData.message}: ${resData.info.message}`);
       }
-    } catch (error) {
-      console.error(error);
-      return { success: false, error: error.message };
+    } catch (err) {
+      console.error(err);
+      return showNotification("fail", `${err.message}: ${err.info.message}`);
     } finally {
       setLoading(false);
     }
@@ -155,7 +161,7 @@ const Account = () => {
                     type="button"
                     onClick={() => {
                       setIsEditing(false);
-                      setUser(userData);
+                      setUser(userCookie);
                     }}
                     className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300"
                   >

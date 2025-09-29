@@ -1,32 +1,58 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
+import path from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load env vars
-dotenv.config({ path: path.resolve(__dirname, '.env') });
-console.log('PGRST_DB_URL:', process.env.PGRST_DB_URL);
+dotenv.config({ path: path.resolve(__dirname, ".env") });
+console.log("PGRST_DB_URL:", process.env.PGRST_DB_URL);
 
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/users.js";
+import colorRoutes from "./routes/colors.js";
+import categoryRoutes from "./routes/categories.js";
+import sizeRoutes from "./routes/sizes.js";
+import productRoutes from "./routes/products.js";
+import inventoryRoutes from "./routes/inventory.js";
+
+
+
+
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
 // Middleware
-app.use(cors({
-  origin: "http://localhost:5173", 
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(bodyParser.json());
-app.set("trust proxy", 1); 
+app.set("trust proxy", 1);
 
-// Routes
-app.use("/api/auth", authRoutes);
+// User Route
+app.use("/api", userRoutes);
+
+// Color Route
+app.use("/api", colorRoutes);
+
+// Category Route
+app.use("/api", categoryRoutes);
+
+// Size Route
+app.use("/api", sizeRoutes);
+
+// Product Route
+app.use("/api", productRoutes);
+
+// Inventory Route
+app.use("/api", inventoryRoutes);
 
 // Root route
 app.get("/", (req, res) => {

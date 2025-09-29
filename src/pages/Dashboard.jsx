@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getCookie } from "../utils/auth";
-import { capitalizeWords } from "../utils/format";
+import { capitalizeWords } from "../../shared/utils/helperFunctions";
 
 export const Dashboard = () => {
   const user = JSON.parse(getCookie("user"));
