@@ -169,6 +169,7 @@ function DynamicTableContent({ defaultFormData = {}, location, user }) {
           editType={"fullRow"}
           onRowValueChanged={onRowValueChanged}
           onSelectionChanged={onSelectionChanged}
+          autoSizeStrategy={ {type: 'fitGridWidth'} }
         />
       </div>
       <div className="flex flex-row-reverse m-0 p-0">
