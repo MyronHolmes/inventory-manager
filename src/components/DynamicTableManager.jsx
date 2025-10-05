@@ -54,6 +54,7 @@ function DynamicTableContent({ defaultFormData = {}, location, user }) {
       resizable: true,
       filter: true,
       sortable: true,
+      minWidth: 150
     }),
     []
   );
