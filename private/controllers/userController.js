@@ -129,6 +129,17 @@ export const postUser = async (req, res) => {
 export const patchUser = async (req, res) => {
   try {
     const { id, first_name, last_name, email, role, updated_by } = req.body;
+    let referer = req?.headers?.referer || "";
+    let message = "User Successfully Updated.";
+
+    if ([process.env.DEMO_MANAGER_ID, process.env.DEMO_STAFF_ID].includes(id) && referer?.includes("/account")) {
+      sendResponse(
+        res,
+        { info: { message: "Sorry, You Can Not Edit A Demo User." }, message: "Error" },
+        400
+      );
+    }
+
     const firstName = capitalizeWords(first_name);
     const lastName = capitalizeWords(last_name);
     const patchObj = {
@@ -141,9 +152,6 @@ export const patchUser = async (req, res) => {
     };
 
     const user = await User.updateUser(id, patchObj);
-
-    let referer = req?.headers?.referer || "";
-    let message = "User Successfully Updated.";
 
     // If the request comes from the /account route then the user cookie will update
     if (referer?.includes("/account")) {
@@ -172,6 +180,14 @@ export const patchUser = async (req, res) => {
 export const patchPassword = async (req, res) => {
   try {
     const { id, currentPassword, newPassword, updatedBy } = req.body;
+
+    if ([process.env.DEMO_MANAGER_ID, process.env.DEMO_STAFF_ID].includes(id)) {
+      sendResponse(
+        res,
+        { info: { message: "Sorry, You Can Not Edit A Demo User." } },
+        400
+      );
+    }
 
     const user = await User.getUserById(id);
     console.log(user);
