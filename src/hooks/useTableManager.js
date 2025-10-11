@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import { createColDef } from "../utils/colDef";
 import { formatColumnName } from "../utils/format";
 import { getErrorMessage } from "../utils/fetchHelpers";
-import { makeRequest } from "../../shared/utils/helperFunctions";
 
 export const useTableManager = (location, user) => {
   // State
@@ -25,7 +24,10 @@ export const useTableManager = (location, user) => {
     try {
       setTableLoading(true);
       setError("");
-      const tableData = await makeRequest(`/api${location.pathname}`);
+      const response = await fetch(`/api${location.pathname}`);
+      const tableData = await response.json();
+
+      if (!response.ok) throw (tableData);
       
       setFormDefs(tableData.definitions);
       setTitle(tableData.table);

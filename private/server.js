@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename);
 
 // Load env vars
 dotenv.config({ path: path.resolve(__dirname, ".env") });
-console.log("PGRST_DB_URL:", process.env.PGRST_DB_URL);
+// console.log("PGRST_DB_URL:", process.env.PGRST_DB_URL);
 
 import express from "express";
 import cors from "cors";

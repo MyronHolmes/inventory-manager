@@ -1,13 +1,15 @@
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-import { makeRequest } from "../../shared/utils/helperFunctions.js";
+import { makeRequest } from "../utils/helperFunctions.js";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-const API_URL = process.env.PGRST_DB_URL;
+const API_URL = process.env.PGRST_URL || process.env.PGRST_DB_URL;
+
 
 // Get Swagger Docs
 export const getSwaggerDocs = async () => {
@@ -42,7 +44,7 @@ export const updateColor = async (id, patchObj) => {
 // Delete Color(s)
 export const deleteColor = async (idFilter) => {
   const color = await makeRequest(
-    `${process.env.PGRST_DB_URL}colors?id=in.(${idFilter})`,
+    `${API_URL}colors?id=in.(${idFilter})`,
     {
       method: "DELETE",
       headers: { Prefer: "return=representation" },

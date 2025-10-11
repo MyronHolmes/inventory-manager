@@ -4,7 +4,9 @@ import {
 } from "../../shared/utils/helperFunctions.js";
 import * as Product from "../models/productModel.js";
 import { sendError, sendResponse } from "../utils/response.js";
-import { makeRequest } from "../../shared/utils/helperFunctions.js";
+import { makeRequest } from "../utils/helperFunctions.js";
+
+const API_URL = process.env.PGRST_URL || process.env.PGRST_DB_URL;
 
 // Product Table
 export const getProducts = async (req, res) => {
@@ -59,7 +61,7 @@ export const patchProduct = async (req, res) => {
     const { id, product, description, category, status, quantity, updated_by } =
       req.body;
     const catData = await makeRequest(
-      `${process.env.PGRST_DB_URL}categories?select=id,category&category=eq.${category}`
+      `${API_URL}categories?select=id,category&category=eq.${category}`
     );
     if (!catData) {
       return res
