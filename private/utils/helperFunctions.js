@@ -18,7 +18,7 @@ export const makeRequest = async (route, options = {}) => {
   };
 
   // Only add Supabase auth headers if the key exists and is not empty
-  if (process.env.SUPABASE_ANON_KEY) {
+  if (process.env.SUPABASE_ANON_KEY && process.env.SUPABASE_ANON_KEY !== undefined && process.env.SUPABASE_ANON_KEY !== "") {
     headers["apikey"] = process.env.SUPABASE_ANON_KEY;
     headers["Authorization"] = `Bearer ${process.env.SUPABASE_ANON_KEY}`;
   }
