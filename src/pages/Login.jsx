@@ -26,7 +26,9 @@ export default function Login() {
       });
 
       if (!response.ok) {
+        console.log(response)
         const err = await response.json();
+        console.log(err)
         setError(err.info.message);
         setLoading(false);
         return;
