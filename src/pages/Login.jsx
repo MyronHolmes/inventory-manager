@@ -17,7 +17,7 @@ export default function Login() {
     setError("");
 
     try {
-      const response = await fetch("/api/login", {
+      const response = await fetch(`${import.meta.env.VITE_API}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
