@@ -6,6 +6,8 @@ import * as PV from "../models/inventoryModel.js";
 import { sendError, sendResponse } from "../utils/response.js";
 import { makeRequest } from "../utils/helperFunctions.js";
 
+const API_URL = process.env.PGRST_URL || process.env.PGRST_DB_URL;
+
 // Product Varients Table
 export const getPVs = async (req, res) => {
   try {
@@ -67,13 +69,13 @@ export const patchPV = async (req, res) => {
 
     const [proData, colData, sizData] = await Promise.all([
       makeRequest(
-        `${process.env.PGRST_DB_URL}products?select=id,product&product=eq.${product}`
+        `${API_URL}products?select=id,product&product=eq.${product}`
       ),
       makeRequest(
-        `${process.env.PGRST_DB_URL}colors?select=id,color&color=eq.${color}`
+        `${API_URL}colors?select=id,color&color=eq.${color}`
       ),
       makeRequest(
-        `${process.env.PGRST_DB_URL}sizes?select=id,size&size=eq.${size}`
+        `${API_URL}sizes?select=id,size&size=eq.${size}`
       ),
     ]);
 

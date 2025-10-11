@@ -44,7 +44,7 @@ export const updateColor = async (id, patchObj) => {
 // Delete Color(s)
 export const deleteColor = async (idFilter) => {
   const color = await makeRequest(
-    `${process.env.PGRST_DB_URL}colors?id=in.(${idFilter})`,
+    `${API_URL}colors?id=in.(${idFilter})`,
     {
       method: "DELETE",
       headers: { Prefer: "return=representation" },

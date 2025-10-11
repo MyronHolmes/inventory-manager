@@ -44,7 +44,7 @@ export const updateCategory = async (id, patchObj) => {
 // Delete Category(ies)
 export const deleteCategory = async (idFilter) => {
   const category = await makeRequest(
-    `${process.env.PGRST_DB_URL}categories?id=in.(${idFilter})`,
+    `${API_URL}categories?id=in.(${idFilter})`,
     {
       method: "DELETE",
       headers: { Prefer: "return=representation" },

@@ -45,7 +45,7 @@ export const updateProduct = async (id, patchObj) => {
 // Delete Product
 export const deleteProduct = async (idFilter) => {
   const product = await makeRequest(
-    `${process.env.PGRST_DB_URL}products?id=in.(${idFilter})`,
+    `${API_URL}products?id=in.(${idFilter})`,
     {
       method: "DELETE",
       headers: { Prefer: "return=representation" },

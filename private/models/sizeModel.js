@@ -44,7 +44,7 @@ export const updateSize = async (id, patchObj) => {
 // Delete Size
 export const deleteSize = async (idFilter) => {
   const size = await makeRequest(
-    `${process.env.PGRST_DB_URL}sizes?id=in.(${idFilter})`,
+    `${API_URL}sizes?id=in.(${idFilter})`,
     {
       method: "DELETE",
       headers: { Prefer: "return=representation" },
