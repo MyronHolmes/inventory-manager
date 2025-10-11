@@ -1,5 +1,5 @@
 import { useState } from "react";
-import VideoBackground from "../components/BackgroundPaint";
+import VideoBackground from "../components/VideoBackground";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -48,7 +48,7 @@ export default function Login() {
       <div className="w-full bg-red-600 text-white text-center">
         {" "}
         For Demo Purposes Use Email: demo-m@example.com With Password: Demo!123
-        For A Manager Role Or Email: demo-s@example.com With Password: Demo!123
+        For A Manager Role Or <br /> Email: demo-s@example.com With Password: Demo!123
         For A Staff Role{" "}
       </div>
       <VideoBackground />
