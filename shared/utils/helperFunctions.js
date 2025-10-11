@@ -1,22 +1,3 @@
-// helper function used for making a request and returning the data object or throwing a error message
-export const makeRequest = async (route, options = {}) => {
-  const response = await fetch(route, {
-    headers: {
-      "Content-Type": "application/json",
-      Prefer: "return=representation",
-      ...options.headers,
-    },
-    ...options,
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    console.log(response)
-    throw { info: {...error, status: response.status, route} };
-  }
-
-  return response.json();
-};
-
 // helper function used to parse table descriptions 
 export const parseDescription = (properties) => {
     const definitions = Object.entries(properties)

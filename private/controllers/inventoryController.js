@@ -4,7 +4,7 @@ import {
 } from "../../shared/utils/helperFunctions.js";
 import * as PV from "../models/inventoryModel.js";
 import { sendError, sendResponse } from "../utils/response.js";
-import { makeRequest } from "../../shared/utils/helperFunctions.js";
+import { makeRequest } from "../utils/helperFunctions.js";
 
 // Product Varients Table
 export const getPVs = async (req, res) => {

@@ -4,7 +4,8 @@ import {
 } from "../../shared/utils/helperFunctions.js";
 import * as Product from "../models/productModel.js";
 import { sendError, sendResponse } from "../utils/response.js";
-import { makeRequest } from "../../shared/utils/helperFunctions.js";
+import { makeRequest } from "../utils/helperFunctions.js";
+
 
 // Product Table
 export const getProducts = async (req, res) => {
