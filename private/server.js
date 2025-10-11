@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename);
 
 // Load env vars
 dotenv.config({ path: path.resolve(__dirname, ".env") });
-// console.log("PGRST_DB_URL:", process.env.PGRST_DB_URL);
+console.log("PGRST_DB_URL:", process.env.PGRST_DB_URL);
 
 import express from "express";
 import cors from "cors";
@@ -26,13 +26,24 @@ import inventoryRoutes from "./routes/inventory.js";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Middleware
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+const allowedOrigins = [
+  'http://localhost:5173',           // Local development
+  'https://surplus-depot.vercel.app' // Production frontend
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
 app.use(bodyParser.json());
 app.set("trust proxy", 1);
 
