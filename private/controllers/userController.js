@@ -41,24 +41,29 @@ export const loginUser = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
+    
+    // Cookie settings that work cross-origin
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // Changed!
+      maxAge: 3600000 // 1 hour
+    };
+
     return res
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
-      })
+      .cookie("token", token, cookieOptions)
       .cookie("user", JSON.stringify(userCookie), {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        ...cookieOptions,
+        httpOnly: false 
       })
       .status(200)
       .json({ message: "Login Successful", user: userCookie });
   } catch (err) {
+    console.error("Login error:", err); 
     sendError(res, err);
   }
 };
-
+ 
 // Logout User
 export const logoutUser = (req, res) => {
   return res
