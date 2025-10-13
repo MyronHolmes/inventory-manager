@@ -27,6 +27,7 @@ export const getProducts = async (req, res) => {
 
     sendResponse(res, resObj);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -52,6 +53,7 @@ export const postProduct = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -86,6 +88,7 @@ export const patchProduct = async (req, res) => {
     };
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -100,6 +103,7 @@ export const deleteProduct = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };

@@ -21,6 +21,7 @@ export const getCategories = async (req, res) => {
 
     sendResponse(res, resObj);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -41,6 +42,7 @@ export const postCategory = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -61,6 +63,7 @@ export const patchCategory = async (req, res) => {
     };
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -75,6 +78,7 @@ export const deleteCategory = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };

@@ -36,6 +36,7 @@ export const getPVs = async (req, res) => {
 
     sendResponse(res, resObj);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -59,6 +60,7 @@ export const postPV = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -95,6 +97,7 @@ export const patchPV = async (req, res) => {
     };
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -109,6 +112,7 @@ export const deletePV = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };

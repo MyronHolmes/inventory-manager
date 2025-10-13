@@ -20,6 +20,7 @@ export const getColors = async (req, res) => {
 
     sendResponse(res, resObj);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -40,6 +41,7 @@ export const postColor = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -60,6 +62,7 @@ export const patchColor = async (req, res) => {
     };
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -74,6 +77,7 @@ export const deleteColor = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };

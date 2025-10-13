@@ -20,6 +20,7 @@ export const getSizes = async (req, res) => {
 
     sendResponse(res, resObj);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -40,6 +41,7 @@ export const postSize = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -60,6 +62,7 @@ export const patchSize = async (req, res) => {
     };
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -74,6 +77,7 @@ export const deleteSize = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };

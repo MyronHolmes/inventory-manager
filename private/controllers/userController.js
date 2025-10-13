@@ -59,7 +59,7 @@ export const loginUser = async (req, res) => {
       .status(200)
       .json({ message: "Login Successful", user: userCookie });
   } catch (err) {
-    console.error("Login error:", err); 
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -97,6 +97,7 @@ export const getUsers = async (req, res) => {
 
     sendResponse(res, resObj);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -126,6 +127,7 @@ export const postUser = async (req, res) => {
 
     sendResponse(res, resObj, 201);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -178,6 +180,7 @@ export const patchUser = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -220,6 +223,7 @@ export const patchPassword = async (req, res) => {
     };
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
@@ -235,6 +239,7 @@ export const deleteUser = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
+    console.error("There was an error: ", err); 
     sendError(res, err);
   }
 };
