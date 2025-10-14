@@ -3,6 +3,7 @@ import Notification from "../components/Notification";
 import { useNotification } from "../hooks/useNotification";
 import { useState } from "react";
 import LoadingScreen from "../components/LoadingScreen";
+import { apiRequest } from "../utils/fetchHelpers";
 
 const Account = () => {
   const [userCookie, setUserCookie] = useState(JSON.parse(getCookie("user")));
@@ -33,7 +34,7 @@ const Account = () => {
     }
     setLoading(true);
     try {
-      const response = await fetch("/api/users", {
+      const response = await apiRequest("/api/users", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

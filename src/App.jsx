@@ -24,7 +24,7 @@ import Password from "./pages/Password.jsx";
 function AppWrapper() {
   const location = useLocation();
   const hideNavOnPaths = ["/login"];
-  const authenticated = JSON.parse(getCookie("user"));
+  const authenticated = JSON.parse(localStorage.getItem("user"));
   const authorized = authenticated?.role;
 
   return (

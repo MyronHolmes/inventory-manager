@@ -1,5 +1,5 @@
 export function refreshRowData(route, table, setData) {
-  fetch(`/api/${route}`)
+  apiRequest(`/api/${route}`)
     .then((res) => res.json())
     .then((data) => setData(data[table]))
     .catch((err) => console.error(`Failed to fetch ${route}:`, err));

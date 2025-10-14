@@ -3,6 +3,7 @@ import { useNotification } from "../hooks/useNotification";
 import { getCookie } from "../utils/auth";
 import LoadingScreen from "../components/LoadingScreen";
 import Notification from "../components/Notification";
+import { apiRequest } from "../utils/fetchHelpers";
 
 const defaultFormData = {
   currentPassword: "",
@@ -42,7 +43,7 @@ const Password = () => {
     }
     setLoading(true);
     try {
-      const response = await fetch("/api/users/password", {
+      const response = await apiRequest("/api/users/password", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

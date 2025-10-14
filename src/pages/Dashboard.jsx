@@ -3,7 +3,8 @@ import { getCookie } from "../utils/auth";
 import { capitalizeWords } from "../../shared/utils/helperFunctions";
 
 export const Dashboard = () => {
-  const user = JSON.parse(getCookie("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const [dateTime, setDateTime] = useState(new Date());
 
   useEffect(() => {

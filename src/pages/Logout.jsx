@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiRequest } from "../utils/fetchHelpers";
 
 export default function Logout() {
   const navigate = useNavigate();
   const [message, setMessage] = useState("Logging out...");
 
   useEffect(() => {
-    fetch("/api/logout", {
+    apiRequest("/api/logout", {
       method: "POST",
       credentials: "include",
     })
