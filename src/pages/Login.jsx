@@ -35,9 +35,13 @@ export default function Login() {
       }
 
       const data = await response.json();
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      
       setLoading(false);
-      // Example: redirect or store user info
       window.location.href = "/";
+      
     } catch (err) {
       console.error("Login error:", err);
       setError("An unexpected error occurred.");

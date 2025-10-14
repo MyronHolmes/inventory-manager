@@ -12,6 +12,9 @@ export default function Logout() {
     })
       .then((res) => {
         if (res.ok) {
+          // Clear token and user from localStorage
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
           setMessage("Logged out successfully");
         } else {
           setMessage("Logout failed");
