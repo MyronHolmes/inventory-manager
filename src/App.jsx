@@ -13,7 +13,6 @@ import {
 } from "react-router-dom";
 import NotFound from "./pages/NotFound";
 import NavBar from "./components/NavBar";
-import { getCookie } from "./utils/auth";
 import Categories from "./pages/Categories";
 import Sizes from "./pages/Sizes";
 import Products from "./pages/Products";
@@ -38,7 +37,7 @@ function AppWrapper() {
           path="/login"
           element={authenticated ? <Navigate to="/" replace /> : <Login />}
         />
-        
+
         {authenticated ? (
           <>
             <Route index element={<Dashboard />} />
@@ -53,7 +52,8 @@ function AppWrapper() {
                 ) : (
                   <AccessDenied />
                 )
-              }            />
+              }
+            />
             <Route
               path="/colors"
               element={

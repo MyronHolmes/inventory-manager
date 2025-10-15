@@ -89,7 +89,6 @@ export const useTableManager = (location, user) => {
         })
         
         const resData = await response.json();
-        console.log(resData)
         if (response.ok) {
           await fetchTableData();
           onMessage("success", resData.message);

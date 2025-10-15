@@ -1,9 +1,8 @@
 import { useLocation } from "react-router-dom";
 import DynamicTableContent from "../components/DynamicTableManager";
-import { getCookie } from "../utils/auth";
 
 const defaultFormData = {
-  size: ""
+  size: "",
 };
 
 export default function Sizes() {

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { getCookie } from "../utils/auth";
 
 export const useModal = (initialFormData = {}) => {
   const user = JSON.parse(localStorage.getItem("user"));

@@ -1,10 +1,9 @@
 import { useLocation } from "react-router-dom";
 import DynamicTableContent from "../components/DynamicTableManager";
-import { getCookie } from "../utils/auth";
 
-  const defaultFormData = {
-    color: ""
-  };
+const defaultFormData = {
+  color: "",
+};
 
 export default function Colors() {
   const location = useLocation();

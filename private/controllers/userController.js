@@ -141,19 +141,6 @@ export const patchUser = async (req, res) => {
 
     const user = await User.updateUser(id, patchObj);
 
-    // If the request comes from the /account route then the user cookie will update
-    if (referer?.includes("/account")) {
-      message = "Your Account Has Been Updated.";
-
-      const userCookie = userCookieObj(user);
-      res.cookie("user", JSON.stringify(userCookie), {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-      });
-    }
-
     const resData = {
       message,
       user,

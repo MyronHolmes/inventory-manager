@@ -1,13 +1,12 @@
 import { useLocation } from "react-router-dom";
 import DynamicTableContent from "../components/DynamicTableManager";
-import { getCookie } from "../utils/auth";
 
-  const defaultFormData = {
-    product: "",
-    color: "",
-    size: "",
-    quantity: 0,
-  };
+const defaultFormData = {
+  product: "",
+  color: "",
+  size: "",
+  quantity: 0,
+};
 
 export default function Inventory() {
   const location = useLocation();

@@ -39,7 +39,6 @@ export const apiRequest = async (endpoint, options = {}) => {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/login";
-      console.log(resData)
       throw new Error("Session Expired");
     }
 
