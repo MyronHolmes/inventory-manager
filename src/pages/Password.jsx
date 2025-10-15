@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNotification } from "../hooks/useNotification";
-import { getCookie } from "../utils/auth";
 import LoadingScreen from "../components/LoadingScreen";
 import Notification from "../components/Notification";
 import { apiRequest } from "../utils/fetchHelpers";
@@ -12,7 +11,7 @@ const defaultFormData = {
 };
 
 const Password = () => {
-  const userData = JSON.parse(getCookie("user"));
+  const userData = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState(defaultFormData);
   const [loading, setLoading] = useState(false);
 

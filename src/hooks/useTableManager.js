@@ -27,7 +27,7 @@ export const useTableManager = (location, user) => {
       const response = await apiRequest(`/api${location.pathname}`);
       const tableData = await response.json();
 
-      if (!response.ok) throw (tableData);
+      if (!response.ok) throw ("There was an erorr, " + tableData);
       
       setFormDefs(tableData.definitions);
       setTitle(tableData.table);

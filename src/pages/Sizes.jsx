@@ -8,7 +8,7 @@ const defaultFormData = {
 
 export default function Sizes() {
   const location = useLocation();
-  const user = JSON.parse(getCookie("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   return (
     <DynamicTableContent

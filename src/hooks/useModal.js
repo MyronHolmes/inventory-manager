@@ -2,7 +2,7 @@ import { useState } from "react";
 import { getCookie } from "../utils/auth";
 
 export const useModal = (initialFormData = {}) => {
-  const user = JSON.parse(getCookie("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     ...initialFormData,

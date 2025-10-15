@@ -40,7 +40,7 @@ export default function Login() {
       localStorage.setItem("user", JSON.stringify(data.user));
       
       setLoading(false);
-      // window.location.href = "/";
+      window.location.href = "/";
       
     } catch (err) {
       console.error("Login error:", err);

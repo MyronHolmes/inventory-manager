@@ -14,6 +14,8 @@ export const getErrorMessage = (resData, name, operation) => {
 const API_URL = import.meta.env.VITE_API;
 
 export const apiRequest = async (endpoint, options = {}) => {
+  try{
+
   const token = localStorage.getItem("token");
 
   const config = {
@@ -31,18 +33,18 @@ export const apiRequest = async (endpoint, options = {}) => {
 
   const response = await fetch(`${API_URL}${endpoint}`, config);
 
-  if (!response.ok) {
     // Handle 401 - redirect to login if token expired
     if (response.status === 401) {
+      const resData = await response.json()
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/login";
-      throw new Error("Session expired");
+      console.log(resData)
+      throw new Error("Session Expired");
     }
 
-    const error = await response.json();
-    throw error;
-  }
-
-  return response.json();
+  return response;
+} catch (err) {
+  console.log(err)
+}
 };
