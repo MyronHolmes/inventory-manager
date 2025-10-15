@@ -41,45 +41,20 @@ export const loginUser = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
-    
-    // Cookie settings that work cross-origin
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // Changed!
-      maxAge: 3600000 // 1 hour
-    };
 
     return res
-      .cookie("token", token, cookieOptions)
-      .cookie("user", JSON.stringify(userCookie), {
-        ...cookieOptions,
-        httpOnly: false 
-      })
       .status(200)
-      .json({ message: "Login Successful", user: userCookie });
+      .json({ message: "Login Successful", user: userCookie, token });
   } catch (err) {
-    console.error("There was an error: ", err); 
+    console.error("There was an error: ", err);
     sendError(res, err);
   }
 };
- 
+
 // Logout User
 export const logoutUser = (req, res) => {
-  return res
-    .clearCookie("user", {
-      path: "/",
-      sameSite: "Strict",
-      secure: process.env.NODE_ENV === "production",
-    })
-    .clearCookie("token", {
-      path: "/",
-      httpOnly: true,
-      sameSite: "Strict",
-      secure: process.env.NODE_ENV === "production",
-    })
-    .status(200)
-    .json({ message: "Logged out successfully" });
+    // In the future, add token blacklisting here
+  return res.status(200).json({ message: "Logged out successfully" });
 };
 
 // Get Users
@@ -97,7 +72,7 @@ export const getUsers = async (req, res) => {
 
     sendResponse(res, resObj);
   } catch (err) {
-    console.error("There was an error: ", err); 
+    console.error("There was an error: ", err);
     sendError(res, err);
   }
 };
@@ -127,7 +102,7 @@ export const postUser = async (req, res) => {
 
     sendResponse(res, resObj, 201);
   } catch (err) {
-    console.error("There was an error: ", err); 
+    console.error("There was an error: ", err);
     sendError(res, err);
   }
 };
@@ -139,10 +114,16 @@ export const patchUser = async (req, res) => {
     let referer = req?.headers?.referer || "";
     let message = "User Successfully Updated.";
 
-    if ([process.env.DEMO_MANAGER_ID, process.env.DEMO_STAFF_ID].includes(id) && referer?.includes("/account")) {
+    if (
+      [process.env.DEMO_MANAGER_ID, process.env.DEMO_STAFF_ID].includes(id) &&
+      referer?.includes("/account")
+    ) {
       sendResponse(
         res,
-        { info: { message: "Sorry, You Can Not Edit A Demo User." }, message: "Error" },
+        {
+          info: { message: "Sorry, You Can Not Edit A Demo User." },
+          message: "Error",
+        },
         400
       );
     }
@@ -160,19 +141,6 @@ export const patchUser = async (req, res) => {
 
     const user = await User.updateUser(id, patchObj);
 
-    // If the request comes from the /account route then the user cookie will update
-    if (referer?.includes("/account")) {
-      message = "Your Account Has Been Updated.";
-
-      const userCookie = userCookieObj(user);
-      res.cookie("user", JSON.stringify(userCookie), {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-      });
-    }
-
     const resData = {
       message,
       user,
@@ -180,7 +148,7 @@ export const patchUser = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
-    console.error("There was an error: ", err); 
+    console.error("There was an error: ", err);
     sendError(res, err);
   }
 };
@@ -223,7 +191,7 @@ export const patchPassword = async (req, res) => {
     };
     sendResponse(res, resData);
   } catch (err) {
-    console.error("There was an error: ", err); 
+    console.error("There was an error: ", err);
     sendError(res, err);
   }
 };
@@ -239,7 +207,7 @@ export const deleteUser = async (req, res) => {
 
     sendResponse(res, resData);
   } catch (err) {
-    console.error("There was an error: ", err); 
+    console.error("There was an error: ", err);
     sendError(res, err);
   }
 };

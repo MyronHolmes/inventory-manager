@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiRequest } from "../utils/fetchHelpers";
 
 export default function Logout() {
   const navigate = useNavigate();
   const [message, setMessage] = useState("Logging out...");
 
   useEffect(() => {
-    fetch("/api/logout", {
+    apiRequest("/api/logout", {
       method: "POST",
       credentials: "include",
     })
       .then((res) => {
         if (res.ok) {
+          // Clear token and user from localStorage
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
           setMessage("Logged out successfully");
         } else {
           setMessage("Logout failed");

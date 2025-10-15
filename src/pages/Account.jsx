@@ -1,12 +1,12 @@
-import { getCookie } from "../utils/auth";
 import Notification from "../components/Notification";
 import { useNotification } from "../hooks/useNotification";
 import { useState } from "react";
 import LoadingScreen from "../components/LoadingScreen";
+import { apiRequest } from "../utils/fetchHelpers";
 
 const Account = () => {
-  const [userCookie, setUserCookie] = useState(JSON.parse(getCookie("user")));
-  const [user, setUser] = useState(userCookie);
+  const [userItem, setUserItem] = useState(JSON.parse(localStorage.getItem("user")));
+  const [user, setUser] = useState(userItem);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +24,7 @@ const Account = () => {
   };
 
   const handleSave = async () => {
-    if (JSON.stringify(user) === JSON.stringify(userCookie)) {
+    if (JSON.stringify(user) === JSON.stringify(userItem)) {
       setIsEditing(false);
       return;
     } else if (!user.firstName || !user.lastName || !user.email) {
@@ -33,7 +33,7 @@ const Account = () => {
     }
     setLoading(true);
     try {
-      const response = await fetch("/api/users", {
+      const response = await apiRequest("/api/users", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -55,7 +55,8 @@ const Account = () => {
           email: resData.user.email,
           role: resData.user.role,
         });
-        setUserCookie(user)
+        setUserItem(user)
+        localStorage.setItem("user", JSON.stringify(user));
         setIsEditing(false);
         showNotification("success", resData.message);
       } else {
@@ -161,7 +162,7 @@ const Account = () => {
                     type="button"
                     onClick={() => {
                       setIsEditing(false);
-                      setUser(userCookie);
+                      setUser(userItem);
                     }}
                     className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300"
                   >

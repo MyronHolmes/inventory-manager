@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNotification } from "../hooks/useNotification";
-import { getCookie } from "../utils/auth";
 import LoadingScreen from "../components/LoadingScreen";
 import Notification from "../components/Notification";
+import { apiRequest } from "../utils/fetchHelpers";
 
 const defaultFormData = {
   currentPassword: "",
@@ -11,7 +11,7 @@ const defaultFormData = {
 };
 
 const Password = () => {
-  const userData = JSON.parse(getCookie("user"));
+  const userData = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState(defaultFormData);
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +42,7 @@ const Password = () => {
     }
     setLoading(true);
     try {
-      const response = await fetch("/api/users/password", {
+      const response = await apiRequest("/api/users/password", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

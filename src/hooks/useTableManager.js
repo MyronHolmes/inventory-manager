@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { createColDef } from "../utils/colDef";
 import { formatColumnName } from "../utils/format";
-import { getErrorMessage } from "../utils/fetchHelpers";
+import { apiRequest, getErrorMessage } from "../utils/fetchHelpers";
 
 export const useTableManager = (location, user) => {
   // State
@@ -24,10 +24,10 @@ export const useTableManager = (location, user) => {
     try {
       setTableLoading(true);
       setError("");
-      const response = await fetch(`/api${location.pathname}`);
+      const response = await apiRequest(`/api${location.pathname}`);
       const tableData = await response.json();
 
-      if (!response.ok) throw (tableData);
+      if (!response.ok) throw ("There was an erorr, " + tableData);
       
       setFormDefs(tableData.definitions);
       setTitle(tableData.table);
@@ -82,14 +82,13 @@ export const useTableManager = (location, user) => {
     async (formData, onMessage, name) => {
       setOperationLoading(true);
       try {
-        const response = await fetch(`/api${location.pathname}`, {
+        const response = await apiRequest(`/api${location.pathname}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...formData, created_by: user.id }),
-        });
-
+        })
+        
         const resData = await response.json();
-        console.log(resData)
         if (response.ok) {
           await fetchTableData();
           onMessage("success", resData.message);
@@ -117,11 +116,11 @@ export const useTableManager = (location, user) => {
     async (recordData, onMessage, name) => {
       setOperationLoading(true);
       try {
-        const response = await fetch(`/api${location.pathname}`, {
+        const response = await apiRequest(`/api${location.pathname}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...recordData, updated_by: user.id }),
-        });
+        })
 
         const resData = await response.json();
 
@@ -154,7 +153,7 @@ export const useTableManager = (location, user) => {
       try {
         const ids = rows.map((row) => row.id);
 
-        const response = await fetch(`/api${location.pathname}`, {
+        const response = await apiRequest(`/api${location.pathname}`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ids }),

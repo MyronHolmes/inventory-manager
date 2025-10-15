@@ -13,7 +13,6 @@ import {
 } from "react-router-dom";
 import NotFound from "./pages/NotFound";
 import NavBar from "./components/NavBar";
-import { getCookie } from "./utils/auth";
 import Categories from "./pages/Categories";
 import Sizes from "./pages/Sizes";
 import Products from "./pages/Products";
@@ -24,7 +23,7 @@ import Password from "./pages/Password.jsx";
 function AppWrapper() {
   const location = useLocation();
   const hideNavOnPaths = ["/login"];
-  const authenticated = JSON.parse(getCookie("user"));
+  const authenticated = JSON.parse(localStorage.getItem("user"));
   const authorized = authenticated?.role;
 
   return (
@@ -38,7 +37,7 @@ function AppWrapper() {
           path="/login"
           element={authenticated ? <Navigate to="/" replace /> : <Login />}
         />
-        
+
         {authenticated ? (
           <>
             <Route index element={<Dashboard />} />
@@ -53,7 +52,8 @@ function AppWrapper() {
                 ) : (
                   <AccessDenied />
                 )
-              }            />
+              }
+            />
             <Route
               path="/colors"
               element={
