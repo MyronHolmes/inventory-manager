@@ -35,10 +35,12 @@ export const apiRequest = async (endpoint, options = {}) => {
 
     // Handle 401 - redirect to login if token expired
     if (response.status === 401) {
+      console.log(response)
       const resData = await response.json()
+      console.log(resData)
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      window.location.href = "/login";
+      // window.location.href = "/login";
       throw new Error("Session Expired");
     }
 

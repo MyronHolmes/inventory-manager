@@ -74,7 +74,7 @@ export const deleteColor = async (req, res) => {
 
     const colors = await Color.deleteColor(idFilter);
     const resData = { message: "Color(s) Deleted Successfully.", colors };
-
+    console.log(resData)
     sendResponse(res, resData);
   } catch (err) {
     console.error("There was an error: ", err); 
