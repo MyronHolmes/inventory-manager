@@ -47,7 +47,6 @@ export const deleteColor = async (idFilter) => {
     `${API_URL}colors?id=in.(${idFilter})`,
     {
       method: "DELETE",
-      headers: { Prefer: "return=representation" },
     }
   );
   return color;

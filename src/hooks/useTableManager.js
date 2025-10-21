@@ -27,8 +27,10 @@ export const useTableManager = (location, user) => {
       const response = await apiRequest(`/api${location.pathname}`);
       const tableData = await response.json();
 
-      if (!response.ok) throw ("There was an erorr, " + tableData);
-      
+      if (!response.ok) {
+        throw tableData;
+      }
+
       setFormDefs(tableData.definitions);
       setTitle(tableData.table);
 
@@ -44,8 +46,8 @@ export const useTableManager = (location, user) => {
         setRowData(tableData.content);
       }
     } catch (err) {
-      console.log(err)
-      setError(`${err.message}: ${err.info.message}`)
+      console.log(err);
+      setError(`${err.message}: ${err.info.message}`);
     } finally {
       setTableLoading(false);
     }
@@ -86,19 +88,15 @@ export const useTableManager = (location, user) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...formData, created_by: user.id }),
-        })
-        
+        });
+
         const resData = await response.json();
         if (response.ok) {
           await fetchTableData();
           onMessage("success", resData.message);
           return { success: true };
         } else {
-          const errorMessage = getErrorMessage(
-            resData,
-            name,
-            "Create"
-          );
+          const errorMessage = getErrorMessage(resData, name, "Create");
           onMessage("fail", errorMessage);
           return { success: false, error: errorMessage };
         }
@@ -120,7 +118,7 @@ export const useTableManager = (location, user) => {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...recordData, updated_by: user.id }),
-        })
+        });
 
         const resData = await response.json();
 
@@ -129,17 +127,13 @@ export const useTableManager = (location, user) => {
           onMessage("success", resData.message);
           return { success: true };
         } else {
-          const errorMessage = getErrorMessage(
-            resData,
-            name,
-            "Update"
-          );
+          const errorMessage = getErrorMessage(resData, name, "Update");
           onMessage("fail", errorMessage);
           return { success: false, error: errorMessage };
         }
       } catch (error) {
         console.error(error);
-        return {success: false, error: `${err.message}: ${err.info.message}` };
+        return { success: false, error: `${err.message}: ${err.info.message}` };
       } finally {
         setOperationLoading(false);
       }
