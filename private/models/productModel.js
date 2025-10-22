@@ -48,7 +48,7 @@ export const deleteProduct = async (idFilter) => {
     `${API_URL}products?id=in.(${idFilter})`,
     {
       method: "DELETE",
-      headers: { Prefer: "return=representation" },
+      
     }
   );
   return product;

@@ -47,7 +47,7 @@ export const deleteCategory = async (idFilter) => {
     `${API_URL}categories?id=in.(${idFilter})`,
     {
       method: "DELETE",
-      headers: { Prefer: "return=representation" },
+      
     }
   );
   return category;

@@ -47,7 +47,7 @@ export const deleteSize = async (idFilter) => {
     `${API_URL}sizes?id=in.(${idFilter})`,
     {
       method: "DELETE",
-      headers: { Prefer: "return=representation" },
+      
     }
   );
   return size;

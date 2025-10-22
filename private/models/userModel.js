@@ -59,7 +59,7 @@ export const updateUser = async (id, patchObj) => {
 export const deleteUser = async (idList) => {
   const user = await makeRequest(`${API_URL}users?id=in.(${idList})`, {
     method: "DELETE",
-    headers: { Prefer: "return=representation" },
+    
   });
   return user;
 };

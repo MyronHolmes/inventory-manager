@@ -53,7 +53,7 @@ export const deleteProductVariant = async (idFilter) => {
     `${API_URL}product_variants?id=in.(${idFilter})`,
     {
       method: "DELETE",
-      headers: { Prefer: "return=representation" },
+      
     }
   );
   return inventory;
