@@ -11,7 +11,7 @@ A full-stack inventory management application built with React, Express, and Pos
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Dependencies](#dependencies)
-- [Build/Deployment](#build)
+- [Build & Deployment](#build--deployment)
 
 
 
@@ -84,27 +84,20 @@ Surplus Depot is a comprehensive inventory management system designed to help bu
 
 
 ## 🏗 Architecture
-┌─────────────────┐
-│   Frontend      │
-│   (Vercel)      │
-│   React + Vite  │
-└────────┬────────┘
-│
+┌───────────────┐
+│ Frontend │ (Vercel)
+│ React + Vite │
+└──────┬────────┘
 │ HTTPS
-│
-┌────────▼────────┐
-│   Backend       │
-│   (Render)      │
-│   Express API   │
-└────────┬────────┘
-│
+┌──────▼────────┐
+│ Backend │ (Render)
+│ Express API │
+└──────┬────────┘
 │ PostgREST
-│
-┌────────▼────────┐
-│   Database      │
-│   (Supabase)    │
-│   PostgreSQL    │
-└─────────────────┘
+┌──────▼────────┐
+│ Database │ (Supabase)
+│ PostgreSQL │
+└───────────────┘
 
 
 ### Data Flow
@@ -119,7 +112,7 @@ Surplus Depot is a comprehensive inventory management system designed to help bu
 
 ### Frontend Dependencies
 
-    ```json
+    ```
     {
       "dependencies": {
         "react": "^18.3.1",
@@ -141,7 +134,7 @@ Surplus Depot is a comprehensive inventory management system designed to help bu
 
 ### Backend Dependencies
 
-    ```json
+    ```
     {
       "dependencies": {
         "express": "^5.1.0",
@@ -157,7 +150,8 @@ Surplus Depot is a comprehensive inventory management system designed to help bu
     }
 
 
-## 🧱 Build
+## 🧱 Build & Deployment
+
 
 ### System Requirements
 	•	Node.js: 18.x or higher
@@ -197,3 +191,34 @@ npm run dev
 
 **Run production server**
 npm start
+
+1. Clone the repo:
+	```
+	git clone https://github.com/MyronHolmes/inventory-manager.git
+2. Install dependencies:
+	```
+	cd inventory-manager
+	npm install
+3. Configure environment variables:
+	```
+	• DATABASE_URL=postgres://user:password@localhost:5432/mydb
+	• AG_GRID_LICENSE=your-license-key
+	• JWT_SECRET=your-secret-key
+4. Start backend:
+	```
+	npm run dev:backend
+5. Start frontend:
+	```
+	npm run dev:frontend
+6. Open http://localhost:5173
+
+Deployment
+
+- **Frontend (Vercel)**: [[https://your-frontend.vercel.app](https://surplus-depot.vercel.app/login)  
+  The main user-facing application.
+
+- **Backend (Render)**: [[https://your-backend.onrender.com](https://surplus-depot-backend.onrender.com)
+  API server powering the frontend.
+
+- **Database (Supabase)**: [https://app.supabase.com/project/your-project-id](https://supabase.com/dashboard/project/hdjauznlahayksvylrrg)  
+  PostgreSQL database (only for developers; not publicly accessible for production).
