@@ -55,7 +55,7 @@ export const patchSize = async (req, res) => {
       updated_by,
     };
 
-    const sizeData = Size.updateSize(id, patchObj);
+    const sizeData = await Size.updateSize(id, patchObj);
     const resData = {
       message: "Size Successfully Updated.",
       size: sizeData,

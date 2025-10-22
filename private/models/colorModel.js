@@ -34,7 +34,7 @@ export const createColor = async (postObj) => {
 
 // Update Color
 export const updateColor = async (id, patchObj) => {
-  const color = await makeRequest(`${API_URL}colors?id=eq.${id}`, {
+    const color = await makeRequest(`${API_URL}colors?id=eq.${id}`, {
     method: "PATCH",
     body: JSON.stringify(patchObj),
   });

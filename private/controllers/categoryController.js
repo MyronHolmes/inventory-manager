@@ -56,7 +56,7 @@ export const patchCategory = async (req, res) => {
       updated_by,
     };
 
-    const categoryData = Category.updateCategory(id, patchObj);
+    const categoryData = await Category.updateCategory(id, patchObj);
     const resData = {
       message: "Category Successfully Updated.",
       category: categoryData,

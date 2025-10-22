@@ -90,7 +90,7 @@ export const patchPV = async (req, res) => {
       updated_by,
     };
 
-    const pvData = PV.updateProductVariant(id, patchObj);
+    const pvData = await PV.updateProductVariant(id, patchObj);
     const resData = {
       message: "Product Variant Successfully Updated.",
       inventory: pvData,

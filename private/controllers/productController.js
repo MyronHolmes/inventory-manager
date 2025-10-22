@@ -81,7 +81,7 @@ export const patchProduct = async (req, res) => {
       updated_by,
     };
 
-    const productData = Product.updateProduct(id, patchObj);
+    const productData = await Product.updateProduct(id, patchObj);
     const resData = {
       message: "Product Successfully Updated.",
       product: productData,

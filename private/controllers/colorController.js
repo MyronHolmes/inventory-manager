@@ -55,7 +55,7 @@ export const patchColor = async (req, res) => {
       updated_by,
     };
 
-    const colorData = Color.updateColor(id, patchObj);
+    const colorData = await Color.updateColor(id, patchObj);
     const resData = {
       message: "Color Successfully Updated.",
       color: colorData,
