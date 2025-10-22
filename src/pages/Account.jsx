@@ -5,7 +5,9 @@ import LoadingScreen from "../components/LoadingScreen";
 import { apiRequest } from "../utils/fetchHelpers";
 
 const Account = () => {
-  const [userItem, setUserItem] = useState(JSON.parse(localStorage.getItem("user")));
+  const [userItem, setUserItem] = useState(
+    JSON.parse(localStorage.getItem("user"))
+  );
   const [user, setUser] = useState(userItem);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -35,7 +37,10 @@ const Account = () => {
     try {
       const response = await apiRequest("/api/users", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Referer-Path": window.location.pathname,
+        },
         body: JSON.stringify({
           id: user.id,
           first_name: user.firstName,
@@ -55,7 +60,7 @@ const Account = () => {
           email: resData.user.email,
           role: resData.user.role,
         });
-        setUserItem(user)
+        setUserItem(user);
         localStorage.setItem("user", JSON.stringify(user));
         setIsEditing(false);
         showNotification("success", resData.message);

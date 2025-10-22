@@ -14,12 +14,10 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password)
-    return sendResponse(
-      res,
-      { info: { message: "Missing Email Or Password" } },
-      400
-    );
-
+    throw {
+      info: { message: "Missing Email Or Password", status: 400 },
+      message: "Error",
+    };
   try {
     const user = await User.loginUser(email);
 
@@ -33,11 +31,10 @@ export const loginUser = async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return sendResponse(
-        res,
-        { info: { message: "Invalid Credentials" } },
-        401
-      );
+      throw {
+        info: { message: "Invalid Credentials", status: 401 },
+        message: "Error",
+      };
     }
 
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
@@ -53,7 +50,7 @@ export const loginUser = async (req, res) => {
 
 // Logout User
 export const logoutUser = (req, res) => {
-    // In the future, add token blacklisting here
+  // In the future, add token blacklisting here
   return res.status(200).json({ message: "Logged out successfully" });
 };
 
@@ -111,21 +108,22 @@ export const postUser = async (req, res) => {
 export const patchUser = async (req, res) => {
   try {
     const { id, first_name, last_name, email, role, updated_by } = req.body;
-    let referer = req?.headers?.referer || "";
+    let referer = req?.headers?.["x-referer-path"] || "/";
     let message = "User Successfully Updated.";
 
     if (
-      [process.env.DEMO_MANAGER_ID_PROD, process.env.DEMO_MANAGER_ID, process.env.DEMO_STAFF_ID_PROD, process.env.DEMO_STAFF_ID].includes(id) &&
+      [
+        process.env.DEMO_MANAGER_ID_PROD,
+        process.env.DEMO_MANAGER_ID,
+        process.env.DEMO_STAFF_ID_PROD,
+        process.env.DEMO_STAFF_ID,
+      ].includes(id) &&
       referer?.includes("/account")
     ) {
-      sendResponse(
-        res,
-        {
-          info: { message: "Sorry, You Can Not Edit A Demo User." },
-          message: "Error",
-        },
-        400
-      );
+      throw {
+        info: { message: "Sorry, You Can Not Edit A Demo User.", status: 400 },
+        message: "Error",
+      };
     }
 
     const firstName = capitalizeWords(first_name);
@@ -157,12 +155,18 @@ export const patchPassword = async (req, res) => {
   try {
     const { id, currentPassword, newPassword, updatedBy } = req.body;
 
-    if ([process.env.DEMO_MANAGER_ID, process.env.DEMO_STAFF_ID].includes(id)) {
-      sendResponse(
-        res,
-        { info: { message: "Sorry, You Can Not Edit A Demo User." } },
-        400
-      );
+    if (
+      [
+        process.env.DEMO_MANAGER_ID_PROD,
+        process.env.DEMO_MANAGER_ID,
+        process.env.DEMO_STAFF_ID_PROD,
+        process.env.DEMO_STAFF_ID,
+      ].includes(id)
+    ) {
+      throw {
+        info: { message: "Sorry, You Can Not Edit A Demo User.", status: 400 },
+        message: "Error",
+      };
     }
 
     const user = await User.getUserById(id);
@@ -170,12 +174,10 @@ export const patchPassword = async (req, res) => {
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     console.log("THIS IS ISMATCH, " + isMatch);
     if (!isMatch) {
-      sendResponse(
-        res,
-        { info: { message: "Current Password Is Incorrect." } },
-        401
-      );
-      return;
+      throw {
+        info: { message: "Current Password Is Incorrect.", status: 401 },
+        message: "Error",
+      };
     }
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
