@@ -115,7 +115,7 @@ export const patchUser = async (req, res) => {
     let message = "User Successfully Updated.";
 
     if (
-      [process.env.DEMO_MANAGER_ID, process.env.DEMO_STAFF_ID].includes(id) &&
+      [process.env.DEMO_MANAGER_ID_PROD, process.env.DEMO_MANAGER_ID, process.env.DEMO_STAFF_ID_PROD, process.env.DEMO_STAFF_ID].includes(id) &&
       referer?.includes("/account")
     ) {
       sendResponse(
