@@ -21,6 +21,6 @@ export const parseTimestamp = (value) => {
     ? value 
     : value.replace(' ', 'T');
   
-  const date = new Date(normalized);
+  const date = new Date(normalized + "Z");
   return isNaN(date) ? null : date;
 }
