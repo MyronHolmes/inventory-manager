@@ -1,4 +1,4 @@
-import { formatColumnName } from "./format";
+import { formatColumnName, parseTimestamp } from "./format";
 
 export const columnsToHide = ["password", "id"];
 
@@ -14,24 +14,29 @@ const dateTimeCol = {
   filter: "agDateColumnFilter",
   filterParams: {
     comparator: function (filterLocalDateAtMidnight, cellValue) {
-      const cellDate = new Date(cellValue);
-      if (filterLocalDateAtMidnight.getTime() === cellDate.setHours(0, 0, 0, 0))
+      const cellDate = parseTimestamp(cellValue);
+      if (!cellDate) return 0;
+      
+      if (filterLocalDateAtMidnight.getTime() === cellDate.setHours(0, 0, 0, 0)) 
         return 0;
+      
       return cellDate < filterLocalDateAtMidnight ? -1 : 1;
     },
     buttons: ["clear"],
   },
   valueFormatter: (params) => {
     if (!params.value) return "";
-    const date = new Date(params.value);
-    if (isNaN(date)) return params.value;
+    
+    const date = parseTimestamp(params.value);
+    if (!date) return params.value;
+    
     return date.toLocaleString(undefined, {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
-      timeZoneName: "short", 
+      timeZoneName: "short",
     });
   },
 };
