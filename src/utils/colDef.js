@@ -23,15 +23,19 @@ const dateTimeCol = {
   },
   valueFormatter: (params) => {
     if (!params.value) return "";
-    return new Date(params.value).toLocaleString("en-US", {
+    const date = new Date(params.value);
+    if (isNaN(date)) return params.value;
+    return date.toLocaleString(undefined, {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
+      timeZoneName: "short", 
     });
   },
 };
+
 const dateCol = {
   cellDataType: "dateString",
   filter: "agDateColumnFilter",
