@@ -91,7 +91,7 @@ const Password = () => {
                 Current Password
               </label>
               <input
-                type="text"
+                type="password"
                 name="currentPassword"
                 value={formData.currentPassword}
                 onChange={handleChange}
@@ -105,7 +105,7 @@ const Password = () => {
                 New Password
               </label>
               <input
-                type="text"
+                type="password"
                 name="newPassword"
                 value={formData.newPassword}
                 onChange={handleChange}
@@ -118,7 +118,7 @@ const Password = () => {
                 Comfirm New Password
               </label>
               <input
-                type="text"
+                type="password"
                 name="newPasswordComfirmed"
                 value={formData.newPasswordComfirmed}
                 onChange={handleChange}
