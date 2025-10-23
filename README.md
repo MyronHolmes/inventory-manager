@@ -79,7 +79,7 @@ Surplus Depot is a comprehensive inventory management system designed to help bu
 - **PostgreSQL** - Relational database
 - **Supabase** - Database hosting and PostgREST API
 
-### Deployment
+### Deployed 
 - **Vercel** - Frontend hosting
 - **Render** - Backend hosting
 - **Supabase** - Database and PostgREST API
@@ -292,14 +292,15 @@ This application is deployed using:
 
 ## 🗄️Database Schema
 
-### Core Tables
+### **Core Tables**
 	•	users - User accounts with role-based access
 	•	categories - Product categories
 	•	colors - Available color variants
 	•	sizes - Available size variants
 	•	products - Main product catalog
 	•	product_variants - Specific product variations (color + size)
-### Key Features
+	
+### **Key Features**
 	•	UUID primary keys
 	•	Automatic timestamps via triggers
 	•	Audit trail (created_by, updated_by)
