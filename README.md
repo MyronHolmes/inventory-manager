@@ -84,20 +84,31 @@ Surplus Depot is a comprehensive inventory management system designed to help bu
 
 
 ## 🏗 Architecture
-┌───────────────┐
-│ Frontend │ (Vercel)
-│ React + Vite │
-└──────┬────────┘
-│ HTTPS
-┌──────▼────────┐
-│ Backend │ (Render)
-│ Express API │
-└──────┬────────┘
-│ PostgREST
-┌──────▼────────┐
-│ Database │ (Supabase)
-│ PostgreSQL │
-└───────────────┘
+
+```text
+┌─────────────────┐
+│   Frontend      │
+│   (Vercel)      │
+│   React + Vite  │
+└────────┬────────┘
+          │
+          │ HTTPS
+          │
+┌────────▼────────┐
+│   Backend       │
+│   (Render)      │
+│   Express API   │
+└────────┬────────┘
+          │
+          │ PostgREST
+          │
+┌────────▼────────┐
+│   Database      │
+│   (Supabase)    │
+│   PostgreSQL    │
+└─────────────────┘
+```
+
 
 
 ### Data Flow
@@ -107,48 +118,46 @@ Surplus Depot is a comprehensive inventory management system designed to help bu
 4. **Database** → PostgreSQL stores all data with triggers and functions
 
 
-## Dependencies
 ## 📦 Dependencies
 
-### Frontend Dependencies
+1. **Frontend Dependencies**
+```json
+{
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
+    "ag-grid-community": "^32.3.3",
+    "ag-grid-react": "^32.3.3",
+    "react-hot-toast": "^2.4.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.1",
+    "eslint": "^9.15.0",
+    "tailwindcss": "^3.4.15",
+    "postcss": "^8.4.49",
+    "autoprefixer": "^10.4.20"
+  }
+}
+```
+2. **Backend Dependencies**
 
-    ```
-    {
-      "dependencies": {
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1",
-        "react-router-dom": "^6.28.0",
-        "ag-grid-community": "^32.3.3",
-        "ag-grid-react": "^32.3.3",
-        "react-hot-toast": "^2.4.1"
-      },
-      "devDependencies": {
-        "@vitejs/plugin-react": "^4.3.4",
-        "vite": "^6.0.1",
-        "eslint": "^9.15.0",
-        "tailwindcss": "^3.4.15",
-        "postcss": "^8.4.49",
-        "autoprefixer": "^10.4.20"
-      }
-    }
-
-### Backend Dependencies
-
-    ```
-    {
-      "dependencies": {
-        "express": "^5.1.0",
-        "bcrypt": "^6.0.0",
-        "cors": "^2.8.5",
-        "dotenv": "^16.5.0",
-        "jsonwebtoken": "^9.0.2",
-        "pg": "^8.16.0"
-      },
-      "devDependencies": {
-        "nodemon": "^3.1.10"
-      }
-    }
-
+```json
+{
+  "dependencies": {
+    "express": "^5.1.0",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
+```
 
 ## 🧱 Build & Deployment
 
@@ -160,65 +169,120 @@ Surplus Depot is a comprehensive inventory management system designed to help bu
 	•	Docker: 20.x or higher (for local development)
 	•	Git: 2.x or higher
 
-### Local Development Build
-<ins>**Frontend Build:**</ins>
+### Quick Start
 
-**Navigate to project root**
-cd inventory-manager
+1. **Clone The Repository:**
 
-**Install dependencies**
-npm install
+   ```bash
+   git clone https://github.com/MyronHolmes/inventory-manager.git
+   cd inventory-manager
 
-**Run development server (with hot reload)**
-npm run dev
-
-**Build for production**
-npm run build
-
-**Preview production build locally**
-npm run preview
-
-<ins>**Backend Build:**</ins>
-
-**Navigate to backend directory**
-cd private
-
-**Install dependencies**
-npm install
-
-**Run development server (with nodemon)**
-npm run dev
-
-**Run production server**
-npm start
-
-1. Clone the repo:
-	```
-	git clone https://github.com/MyronHolmes/inventory-manager.git
-2. Install dependencies:
-	```
+3. **Navigate To Project Root:**
+	
+	```bash
 	cd inventory-manager
+
+4. **Frontend: Install Dependencies:**
+	
+	```bash
 	npm install
-3. Configure environment variables:
-	```
-	• DATABASE_URL=postgres://user:password@localhost:5432/mydb
-	• AG_GRID_LICENSE=your-license-key
-	• JWT_SECRET=your-secret-key
-4. Start backend:
-	```
-	npm run dev:backend
-5. Start frontend:
-	```
-	npm run dev:frontend
-6. Open http://localhost:5173
 
-Deployment
+5. **Backend: Install Dependencies:**
+	
+	```bash
+	cd private
+	npm install
+	cd ..
+	
+6. **Frontend: Set Up ENV Variables In Root:**
+	```env
+	VITE_API=http://localhost:4000
+	
+7. ## Backend Dependencies
 
-- **Frontend (Vercel)**: [[https://your-frontend.vercel.app](https://surplus-depot.vercel.app/login)  
-  The main user-facing application.
+	```json
+	{
+	  "dependencies": {
+	    "express": "^5.1.0",
+	    "bcrypt": "^6.0.0",
+	    "cors": "^2.8.5",
+	    "dotenv": "^16.5.0",
+	    "jsonwebtoken": "^9.0.2",
+	    "pg": "^8.16.0"
+	  },
+	  "devDependencies": {
+	    "nodemon": "^3.1.10"
+	  }
+	}
 
-- **Backend (Render)**: [[https://your-backend.onrender.com](https://surplus-depot-backend.onrender.com)
-  API server powering the frontend.
 
-- **Database (Supabase)**: [https://app.supabase.com/project/your-project-id](https://supabase.com/dashboard/project/hdjauznlahayksvylrrg)  
-  PostgreSQL database (only for developers; not publicly accessible for production).
+8. **Start Docker Services:**
+	
+	```bash
+	docker-compose up -d
+
+ 9. **Start Development Servers:**
+	- ### Terminal 1 - Frontend
+
+		```bash
+		npm rub dev
+
+	- ### Terminal 2 - Backend
+
+		```bash
+		cd private
+		nodemon server.js
+
+	- ### Terminal 3 - Database
+
+		```bash
+		npm run start:dev
+	  
+10. **Build For Production**
+
+	```bash
+	npm run build
+
+11. **Preview Production Build Locally**
+
+	```bash
+	npm run preview
+
+12. **Run Production Server**
+	
+	```bash
+	npm start
+
+
+## 🚀 Deployment
+### Production Deployment
+This application is deployed using:
+
+**Frontend (Vercel)**
+- Automatic deployments from `main` branch
+- Live URL: https://surplus-depot.vercel.app
+
+**Backend (Render)**
+- Automatic deployments from `main` branch
+- API URL: https://surplus-depot-backend.onrender.com
+
+**Database (Supabase)**
+- PostgreSQL with PostgREST API
+- Managed backups and scaling
+
+### Environment Variables
+
+1. **Production Frontend (Vercel):**
+
+	```env
+	VITE_API=https://surplus-depot-backend.onrender.com
+
+2. **Production Backend (Render):**
+
+	```env
+	NODE_ENV=production
+	PORT=10000
+	PGRST_URL=https://your-project.supabase.co/rest/v1/
+	SUPABASE_ANON_KEY=your-key
+	JWT_SECRET=your-secret
+	
