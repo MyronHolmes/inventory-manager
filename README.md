@@ -11,16 +11,18 @@ A full-stack inventory management application built with React, Express, and Pos
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Dependencies](#dependencies)
-- [Build & Deployment](#build--deployment)
+- [Build](#build)
+- [Deployment](#deployment)
+- [Database Schema](#database-schema)
 
 
 
-## 🎯 Overview
+## 🎯Overview
 
 Surplus Depot is a comprehensive inventory management system designed to help businesses track products, manage variants (colors, sizes), and monitor stock levels. The application features role-based access control, real-time inventory updates, and a responsive user interface.
 
 
-## ✨ Features
+## ✨Features
 
 - **User Authentication & Authorization**
   - JWT-based authentication
@@ -55,7 +57,7 @@ Surplus Depot is a comprehensive inventory management system designed to help bu
   - Toast notifications for user feedback
 
 
-## 🛠 Tech Stack
+## 🛠Tech Stack
 
 ### Frontend
 - **React 18** - UI library
@@ -83,7 +85,7 @@ Surplus Depot is a comprehensive inventory management system designed to help bu
 - **Supabase** - Database and PostgREST API
 
 
-## 🏗 Architecture
+## 🏗Architecture
 
 ```text
 ┌─────────────────┐
@@ -118,7 +120,7 @@ Surplus Depot is a comprehensive inventory management system designed to help bu
 4. **Database** → PostgreSQL stores all data with triggers and functions
 
 
-## 📦 Dependencies
+## 📦Dependencies
 
 1. **Frontend Dependencies**
 ```json
@@ -159,7 +161,7 @@ Surplus Depot is a comprehensive inventory management system designed to help bu
 }
 ```
 
-## 🧱 Build & Deployment
+## 🧱Build
 
 
 ### System Requirements
@@ -254,7 +256,8 @@ Surplus Depot is a comprehensive inventory management system designed to help bu
 	npm start
 
 
-## 🚀 Deployment
+## 🚀Deployment
+
 ### Production Deployment
 This application is deployed using:
 
@@ -285,4 +288,20 @@ This application is deployed using:
 	PGRST_URL=https://your-project.supabase.co/rest/v1/
 	SUPABASE_ANON_KEY=your-key
 	JWT_SECRET=your-secret
-	
+
+
+## 🗄️Database Schema
+
+### Core Tables
+	•	users - User accounts with role-based access
+	•	categories - Product categories
+	•	colors - Available color variants
+	•	sizes - Available size variants
+	•	products - Main product catalog
+	•	product_variants - Specific product variations (color + size)
+### Key Features
+	•	UUID primary keys
+	•	Automatic timestamps via triggers
+	•	Audit trail (created_by, updated_by)
+	•	Row Level Security (RLS) policies
+	•	Cascade deletes for data integrity
